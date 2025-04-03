@@ -1,0 +1,33 @@
+# Python
+.venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Vs Code
+.vscode/
+
+# Poetry
+.cache/pypoetry/*
+
+# Enviroments
+.env.example
+.env
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+
+# Etc
+.zrok.ps1
+*.log
+*.md
+db/
+assets/
+examples/
+tests/
+
