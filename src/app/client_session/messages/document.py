@@ -1,4 +1,4 @@
-"""Module Containing VideoMessage Structure and Functions"""
+"""Module Containing DocumentMessage Structure and Functions"""
 
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
@@ -6,21 +6,25 @@ from typing import Literal, Optional
 from app.client_session.messages.base import WhatsAppRequestTo
 
 
-class VideoBody(BaseModel):
+class DocumentBody(BaseModel):
     id: Optional[str] = None
     link: Optional[str] = None
     caption: Optional[str] = None
+    filename: str
 
 
-class VideoMessage(WhatsAppRequestTo):
-    type_: Literal["video"] = Field("video", alias="type")
-    video: Optional[VideoBody] = None
+class DocumentMessage(WhatsAppRequestTo):
+    type_: Literal["document"] = Field("document", alias="type")
+    document: Optional[DocumentBody] = None
 
     def write_body(
         self,
+        filename: str,
         id: Optional[str] = None,
         link: Optional[bool] = None,
         caption: Optional[str] = None,
     ):
-        self.video = VideoBody(id=id, link=link, caption=caption)
+        self.document = DocumentBody(
+            id=id, link=link, caption=caption, filename=filename
+        )
         return self

@@ -16,5 +16,5 @@ class AudioMessage(WhatsAppRequestTo):
     audio: Optional[AudioBody] = None
 
     def write_body(self, id: Optional[str] = None, link: Optional[bool] = None):
-        self.text = AudioBody(id=id, link=link)
+        self.audio = AudioBody(id=id, link=link)
         return self
