@@ -31,7 +31,6 @@ class WhatsAppRequest(BaseModel):
         Serializes the model into JSON (with the right field names),
         POSTs it to Graph.
         """
-
         url = f"https://graph.facebook.com/{API_VERSION}/{PHONE_NUMBER_ID}/messages"
 
         headers = {
@@ -66,10 +65,10 @@ class WhatsAppRequest(BaseModel):
 
 class Context(BaseModel):
     message_id: str
+
+
 class WhatsAppRequestTo(WhatsAppRequest):
     recipient_type: Literal["individual"] = "individual"
     to: str
-    context: Optional[Context]
+    context: Optional[Context] = None
 
-
-    
