@@ -71,4 +71,3 @@ class WhatsAppRequestTo(WhatsAppRequest):
     recipient_type: Literal["individual"] = "individual"
     to: str
     context: Optional[Context] = None
-
