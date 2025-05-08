@@ -2,8 +2,9 @@
 
 
 from fastapi import FastAPI
-from app.middleware.resquest_id import RequestIdMiddleware
 import logging
+
+from app.middleware.resquest_id import RequestIdMiddleware
 
 log = logging.getLogger(__name__)
 

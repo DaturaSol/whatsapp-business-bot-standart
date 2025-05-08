@@ -4,23 +4,14 @@ from fastapi import HTTPException, Request, status
 import hashlib
 import hmac
 import logging
-import os
+
+from app.settings import Settings
 
 log = logging.getLogger(__name__)
 
-try:
-    APP_SECRET = os.environ.get("APP_SECRET")
+settings = Settings()
 
-    assert APP_SECRET is not None
-
-except AssertionError:
-    log.error("No APP SECRET found")
-    raise
-
-except Exception as e:
-    log.exception(f"An unexpected error occurred during setup: {e}")
-    raise
-
+APP_SECRET = settings.app_secret
 
 log.info("APP Secret properly loaded")
 

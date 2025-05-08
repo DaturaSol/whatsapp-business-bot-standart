@@ -6,11 +6,11 @@ Implement other Tables as you wish, but this
 will be used as defined here along the program.
 """
 
-from app.data_base.models.base import Base
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
+from app.data_base.models.base import Base
 
 class User(Base):
     """This class is thought on top of WhatsApp Business API

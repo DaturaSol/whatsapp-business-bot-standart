@@ -1,7 +1,7 @@
 """Base model for sending Requests to the WhatsApp Bussines API"""
 
-from typing import Literal
-from pydantic import BaseModel, ConfigDict, BaseSettings, Field
+from typing import Literal, Optional
+from pydantic import BaseModel, ConfigDict
 from aiohttp import ClientSession, ClientError, ContentTypeError
 from asyncio import TimeoutError
 import logging
@@ -21,8 +21,6 @@ class WhatsAppRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     messaging_product: Literal["whatsapp"] = "whatsapp"
-    recipient_type: Literal["individual"] = "individual"
-    to: str
 
     async def send(
         self,
@@ -64,3 +62,14 @@ class WhatsAppRequest(BaseModel):
         except Exception as e:
             log.exception(e)
             raise
+
+
+class Context(BaseModel):
+    message_id: str
+class WhatsAppRequestTo(WhatsAppRequest):
+    recipient_type: Literal["individual"] = "individual"
+    to: str
+    context: Optional[Context]
+
+
+    

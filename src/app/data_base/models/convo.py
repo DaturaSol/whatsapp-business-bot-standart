@@ -6,11 +6,11 @@ Implement other Tables as you wish, but this
 will be used as defined here along the program.
 """
 
-from app.data_base.models.base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, JSON, Index
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
+from app.data_base.models.base import Base
 
 class Convo(Base):
     """This class contains message informations between user

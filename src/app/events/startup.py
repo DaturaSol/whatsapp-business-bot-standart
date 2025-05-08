@@ -1,9 +1,10 @@
 """Process Events that should happen on startup"""
 
 from fastapi import FastAPI
+import logging
+
 from app.client_session.startup import startup_client_session
 from app.data_base.startup import startup_db
-import logging
 
 log = logging.getLogger(__name__)
 

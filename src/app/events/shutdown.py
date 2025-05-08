@@ -1,8 +1,9 @@
 """Process Events that should happen on shutdown"""
 
 from fastapi import FastAPI
-from app.client_session.shutdown import shutdown_client_session
 import logging
+
+from app.client_session.shutdown import shutdown_client_session
 
 log = logging.getLogger(__name__)
 

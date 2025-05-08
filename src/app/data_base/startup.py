@@ -1,9 +1,10 @@
 """Module responsible for Startign up the DataBase"""
 
 from fastapi import FastAPI
-from app.data_base.db_helper.core import init_db_engine
 import logging
 from sqlalchemy.ext.asyncio import AsyncEngine
+
+from app.data_base.db_helper.core import init_db_engine
 from app.data_base.db_helper.core import Base
 import app.data_base.models
 

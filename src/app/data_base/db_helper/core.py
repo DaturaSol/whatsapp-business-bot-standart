@@ -9,7 +9,6 @@ concepts when it comes to creating the Data Base.
 4. Contain core functions such as:
 [init_db_engine, create_db_tables, create_async_session, get_async_session]"""
 
-import os
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
@@ -21,10 +20,14 @@ from fastapi import FastAPI, Request
 from pathlib import Path
 import logging
 
+from app.settings import Settings
+
 log = logging.getLogger(__name__)
+settings = Settings()
 
 DB_FOLDER_NAME = "db"
 DB_URL = None
+DB_URL = settings.db_url
 
 # NOTE: This is only for local SQLite
 try:
@@ -47,17 +50,6 @@ try:
 
     else:
         log.info(f"Database folder found: {DB_FOLDER_PATH}")
-
-    DB_URL = os.environ.get("DB_URL")
-
-    if DB_URL is None:
-        log.error("Required environment variable 'DB_URL' is not set.")
-
-        DB_URL = "sqlite+aiosqlite:///./db/db.db"  # NOTE: Wont work for postergres
-
-        log.warning(f"DB_URL not set, using default local path: {DB_URL}")
-    else:
-        log.info("DB_URL successfully retrieved from environment.")
 
 except (ValueError, RuntimeError) as e:
     log.critical(f"Configuration failed: {e}")

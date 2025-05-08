@@ -1,9 +1,10 @@
 """Register all events"""
 
 from fastapi import FastAPI
+import logging
+
 from app.events.startup import startup
 from app.events.shutdown import shutdown
-import logging
 
 log = logging.getLogger(__name__)
 

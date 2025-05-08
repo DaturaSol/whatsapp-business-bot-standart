@@ -5,9 +5,10 @@ An example would be adding users
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
+import logging
+
 from app.data_base.models.user import User
 from app.data_base.models.convo import Convo
-import logging
 
 log = logging.getLogger(__name__)
 
