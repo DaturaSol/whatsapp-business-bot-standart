@@ -1,0 +1,29 @@
+# Python
+.venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Vs Code
+.vscode/
+
+# Poetry
+.cache/pypoetry/*
+
+# Enviroment
+.env
+
+# Git
+.git
+#.gitignore
+
+# Etc
+.zrok.ps1
+*.log
+db/
+assets/
+tests/
+
+# Dont ignore 
+!assets/markdown/images/
