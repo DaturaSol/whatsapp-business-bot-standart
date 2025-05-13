@@ -7,20 +7,25 @@ from app.client_session.messages.base import WhatsAppRequestTo
 
 
 class VideoBody(BaseModel):
-    id: Optional[str] = None
+    id_: Optional[str] = Field(None, alias="id")
     link: Optional[str] = None
     caption: Optional[str] = None
 
 
 class VideoMessage(WhatsAppRequestTo):
     type_: Literal["video"] = Field("video", alias="type")
-    video: Optional[VideoBody] = None
+    video: VideoBody
 
-    def write_body(
+    def __init__(
         self,
-        id: Optional[str] = None,
-        link: Optional[bool] = None,
+        *,
+        to: str,
+        id_: Optional[str] = None,
+        link: Optional[str] = None,
         caption: Optional[str] = None,
+        **kwargs,
     ):
-        self.video = VideoBody(id=id, link=link, caption=caption)
-        return self
+        video_payload = VideoBody(id=id_, link=link, caption=caption)
+
+        super().__init__(to=to, video=video_payload, **kwargs)
+

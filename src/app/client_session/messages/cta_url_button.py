@@ -32,33 +32,29 @@ class CTAHeader(BaseModel):
 class ICTAUrlObject(BaseModel):
     type_: Literal["cta_url"] = Field("cta_url", alias="type")
     header: Optional[CTAHeader] = None
-    body: Optional[CTABody] = None
+    body: CTABody
     footer: Optional[CTAFooter] = None
     action: CTAction
 
 
 class CTAUrlButtonMessage(WhatsAppRequestTo):
     type_: Literal["interactive"] = Field("interactive", alias="type")
-    interactive: Optional[ICTAUrlObject] = None
+    interactive: ICTAUrlObject
 
-    def complete(
-        self,
-        display_text: str,
-        url: str,
-        header: str = None,
-        body: str = None,
-        footer: str = None,
+    def __init__(
+        self, *, to: str, display_text: str, url: str, body_text: str, **kwargs
     ):
-        header_object = CTAHeader(text=header) if header else None
-        body_object = CTABody(text=body) if body else None
-        footer_object = CTAFooter(text=footer) if footer else None
-        cta_parameters = CTAParameters(display_text=display_text, url=url)
-        cta_action_object = CTAction(parameters=cta_parameters)
+        body_payload = CTABody(text=body_text)
+        parameters_payload = CTAParameters(display_text=display_text, url=url)
+        action_payload = CTAction(parameters=parameters_payload)
+        interactive_paylaod = ICTAUrlObject(body=body_payload, action=action_payload)
 
-        self.interactive = ICTAUrlObject(
-            header=header_object,
-            body=body_object,
-            footer=footer_object,
-            action=cta_action_object,
-        )
+        super().__init__(to=to, interactive=interactive_paylaod, **kwargs)
+
+    def add_header(self, text: str):
+        self.interactive.header = CTAHeader(text=text)
+        return self
+
+    def add_footer(self, text: str):
+        self.interactive.footer = CTAFooter(text=text)
         return self

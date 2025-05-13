@@ -1,4 +1,5 @@
 """Module Containing TextMesage Structure and Functions"""
+
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
 
@@ -12,8 +13,10 @@ class TextBody(BaseModel):
 
 class TextMessage(WhatsAppRequestTo):
     type_: Literal["text"] = Field("text", alias="type")
-    text: Optional[TextBody] = None
+    text: TextBody
 
-    def write_body(self, body: str, preview_url: Optional[bool] = None):
-        self.text = TextBody(body=body, preview_url=preview_url)
-        return self
+    def __init__(self, *, to: str, body_text: str, preview_url: bool = None, **kwargs):
+
+        text_payload = TextBody(body=body_text, preview_url=preview_url)
+
+        super().__init__(to=to, text=text_payload, **kwargs)

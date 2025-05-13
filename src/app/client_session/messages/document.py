@@ -7,7 +7,7 @@ from app.client_session.messages.base import WhatsAppRequestTo
 
 
 class DocumentBody(BaseModel):
-    id: Optional[str] = None
+    id_: Optional[str] = Field(None, alias="id")
     link: Optional[str] = None
     caption: Optional[str] = None
     filename: str
@@ -15,16 +15,20 @@ class DocumentBody(BaseModel):
 
 class DocumentMessage(WhatsAppRequestTo):
     type_: Literal["document"] = Field("document", alias="type")
-    document: Optional[DocumentBody] = None
+    document: DocumentBody
 
-    def write_body(
+    def __init__(
         self,
+        *,
+        to: str,
         filename: str,
-        id: Optional[str] = None,
-        link: Optional[bool] = None,
+        id_: Optional[str] = None,
+        link: Optional[str] = None,
         caption: Optional[str] = None,
+        **kwargs,
     ):
-        self.document = DocumentBody(
-            id=id, link=link, caption=caption, filename=filename
+        document_payload = DocumentBody(
+            id=id_, link=link, caption=caption, filename=filename
         )
-        return self
+
+        super().__init__(to=to, image=document_payload, **kwargs)

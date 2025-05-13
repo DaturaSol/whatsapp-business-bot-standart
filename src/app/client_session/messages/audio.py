@@ -7,14 +7,23 @@ from app.client_session.messages.base import WhatsAppRequestTo
 
 
 class AudioBody(BaseModel):
-    id: Optional[str] = None
+    id_: Optional[str] = Field(None, alias="id")
     link: Optional[str] = None
 
 
 class AudioMessage(WhatsAppRequestTo):
     type_: Literal["audio"] = Field("audio", alias="type")
-    audio: Optional[AudioBody] = None
+    audio: AudioBody
 
-    def write_body(self, id: Optional[str] = None, link: Optional[bool] = None):
-        self.audio = AudioBody(id=id, link=link)
-        return self
+    def __init__(
+        self,
+        *,
+        to: str,
+        id_: Optional[str] = None,
+        link: Optional[str] = None,
+        **kwargs,
+    ):
+
+        audio_payload = AudioBody(id=id_, link=link)
+
+        super().__init__(to=to, audio=audio_payload, **kwargs)

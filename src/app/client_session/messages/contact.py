@@ -25,7 +25,7 @@ class OrgObject(BaseModel):
 
 class NameObject(BaseModel):
     formatted_name: str
-    first_name: Optional[str] = None
+    first_name: str
     last_name: Optional[str] = None
     middle_name: Optional[str] = None
     suffix: Optional[str] = None
@@ -55,8 +55,56 @@ class ContactObject(BaseModel):
     org: Optional[OrgObject] = None
     phones: Optional[List[PhoneObject]] = None
     urls: Optional[List[UrlObject]] = None
-
-
+    
+    def add_address_to(self, idx: int):
+        pass
+        
+    def add_email_to(self, idx: int):
+        pass
+            
+    def add_birthday_to(self, idx: int):
+        pass
+        
+    def add_phone_to(self, idx: int):
+        pass
+        
+    def add_org_to(self, idx: int):
+        pass
+        
+    def add_url_to(self, idx: int):
+        pass
+    
+    
 class ContactsMessage(WhatsAppRequestTo):
     type_: Literal["contacts"] = Field("contacts", alias="type")
-    contatcs: List[ContactObject]
+    contacts: List[ContactObject]
+
+    def __init__(
+        self,
+        *,
+        to: str,
+        formatted_name: str,
+        first_name: str,
+        last_name: Optional[str] = None,
+        middle_name: Optional[str] = None,
+        suffix: Optional[str] = None,
+        prefix: Optional[str] = None,
+        **kwagrs,
+    ):
+        name_paylaod = NameObject(
+            formatted_name=formatted_name,
+            first_name=first_name,
+            last_name=last_name,
+            middle_name=middle_name,
+            suffix=suffix,
+            prefix=prefix,
+        )
+
+        contact_paylaod = ContactObject(name=name_paylaod)
+
+        super().__init__(to=to, contacts=[contact_paylaod], **kwagrs)
+
+    def append_contact(self):
+        pass
+
+    
