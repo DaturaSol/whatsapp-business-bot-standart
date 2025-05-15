@@ -78,13 +78,13 @@ class User(Base):
     def __init__(
         self,
         wa_id: str,
-        formatted_name: str = None,
-        company: str = None,
-        department: str = None,
-        title: str = None,
-        email: str = None,
-        birthday: datetime = None,
-        summary: str = None,
+        formatted_name: str | None = None,
+        company: str | None = None,
+        department: str | None = None,
+        title: str | None = None,
+        email: str | None = None,
+        birthday: datetime | None = None,
+        summary: str | None = None,
     ):
         self.wa_id = wa_id
         self.formatted_name = formatted_name

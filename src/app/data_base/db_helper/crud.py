@@ -16,13 +16,13 @@ log = logging.getLogger(__name__)
 async def create_user(
     async_session: AsyncSession,
     wa_id: str,
-    formatted_name: str = None,
-    company: str = None,
-    department: str = None,
-    title: str = None,
-    email: str = None,
-    birthday: datetime = None,
-    summary: str = None,
+    formatted_name: str | None = None,
+    company: str | None = None,
+    department: str | None = None,
+    title: str | None = None,
+    email: str | None = None,
+    birthday: datetime | None = None,
+    summary: str | None = None,
 ) -> User:
     """Adds an user to the data Base"""
     try:
@@ -52,7 +52,7 @@ async def add_convo(
     wa_id: str,
     timestamp: datetime,
     messages: dict,
-    past_message: str = None,
+    past_message: str | None = None,
 ) -> Convo:
     """Adds a converssation to an already logged used"""
     try:

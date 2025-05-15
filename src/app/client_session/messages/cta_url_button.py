@@ -25,12 +25,12 @@ class CTABody(BaseModel):
 
 
 class CTAHeader(BaseModel):
-    type_: Literal["text"] = Field("text", alias="type")
+    type_: Literal["text"] = Field(default="text", alias="type")
     text: str
 
 
 class ICTAUrlObject(BaseModel):
-    type_: Literal["cta_url"] = Field("cta_url", alias="type")
+    type_: Literal["cta_url"] = Field(default="cta_url", alias="type")
     header: Optional[CTAHeader] = None
     body: CTABody
     footer: Optional[CTAFooter] = None
@@ -38,7 +38,7 @@ class ICTAUrlObject(BaseModel):
 
 
 class CTAUrlButtonMessage(WhatsAppRequestTo):
-    type_: Literal["interactive"] = Field("interactive", alias="type")
+    type_: Literal["interactive"] = Field(default="interactive", alias="type")
     interactive: ICTAUrlObject
 
     def __init__(
@@ -49,7 +49,11 @@ class CTAUrlButtonMessage(WhatsAppRequestTo):
         action_payload = CTAction(parameters=parameters_payload)
         interactive_paylaod = ICTAUrlObject(body=body_payload, action=action_payload)
 
-        super().__init__(to=to, interactive=interactive_paylaod, **kwargs)
+        init_data = kwargs.copy()
+        init_data["to"] = to
+        init_data["interactive"] = interactive_paylaod
+
+        super().__init__(**init_data)
 
     def add_header(self, text: str):
         self.interactive.header = CTAHeader(text=text)

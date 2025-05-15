@@ -26,4 +26,8 @@ class AudioMessage(WhatsAppRequestTo):
 
         audio_payload = AudioBody(id=id_, link=link)
 
-        super().__init__(to=to, audio=audio_payload, **kwargs)
+        init_data = kwargs.copy()
+        init_data["to"] = to
+        init_data["audio"] = audio_payload
+
+        super().__init__(**init_data)

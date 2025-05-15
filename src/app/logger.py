@@ -149,18 +149,19 @@ def setup_logging():
                     "ERROR": "ERROR",
                     "CRITICAL": "CRITICAL",
                 }
-                json_record["severity"] = severity_map.get(record.levelname, "DEFAULT")
-                json_record["logging.googleapis.com/source_location"] = {
+                # TODO: Fix horrible code, honestly i hate this function. 
+                json_record["severity"] = severity_map.get(record.levelname, "DEFAULT") # type: ignore Atrocious codding for my part
+                json_record["logging.googleapis.com/source_location"] = { # type: ignore
                     "file": record.pathname,
                     "line": record.lineno,
                     "function": record.funcName,
                 }
                 # Ensure message field exists and handle potential formatting issues
                 try:
-                    json_record["message"] = record.getMessage()
+                    json_record["message"] = record.getMessage() # type: ignore
                 except Exception as e:
-                    json_record["message"] = f"Error formatting log message: {e}"
-                    json_record["original_log_args"] = (
+                    json_record["message"] = f"Error formatting log message: {e}" # type: ignore
+                    json_record["original_log_args"] = ( # type: ignore
                         record.args
                     )  # Add original args for debugging
                 return json_record
@@ -171,7 +172,7 @@ def setup_logging():
                 "name": "name",
                 "taskName": "taskName",
                 "requestId": "requestId",
-            },
+            }, # type: ignore
             datefmt=LOG_FORMAT_DATE,  # Or ISO format
         )
         console_handler.setFormatter(formatter_console)

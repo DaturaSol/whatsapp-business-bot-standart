@@ -55,29 +55,29 @@ class ContactObject(BaseModel):
     org: Optional[OrgObject] = None
     phones: Optional[List[PhoneObject]] = None
     urls: Optional[List[UrlObject]] = None
-    
+
     def add_address_to(self, idx: int):
         pass
-        
+
     def add_email_to(self, idx: int):
         pass
-            
+
     def add_birthday_to(self, idx: int):
         pass
-        
+
     def add_phone_to(self, idx: int):
         pass
-        
+
     def add_org_to(self, idx: int):
         pass
-        
+
     def add_url_to(self, idx: int):
         pass
-    
-    
+
+
 class ContactsMessage(WhatsAppRequestTo):
     type_: Literal["contacts"] = Field("contacts", alias="type")
-    contacts: List[ContactObject]
+    contacts: List[ContactObject] = []
 
     def __init__(
         self,
@@ -102,9 +102,11 @@ class ContactsMessage(WhatsAppRequestTo):
 
         contact_paylaod = ContactObject(name=name_paylaod)
 
-        super().__init__(to=to, contacts=[contact_paylaod], **kwagrs)
+        init_data = kwagrs.copy()
+        init_data["to"] = to
+        init_data["contacts"] = [contact_paylaod]
+
+        super().__init__(**init_data)
 
     def append_contact(self):
         pass
-
-    

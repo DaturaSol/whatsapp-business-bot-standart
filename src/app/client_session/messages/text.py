@@ -12,11 +12,15 @@ class TextBody(BaseModel):
 
 
 class TextMessage(WhatsAppRequestTo):
-    type_: Literal["text"] = Field("text", alias="type")
+    type_: Literal["text"] = Field(default="text", alias="type")
     text: TextBody
 
-    def __init__(self, *, to: str, body_text: str, preview_url: bool = None, **kwargs):
+    def __init__(self, *, to: str, body_text: str, preview_url: bool = False, **kwargs):
 
         text_payload = TextBody(body=body_text, preview_url=preview_url)
 
-        super().__init__(to=to, text=text_payload, **kwargs)
+        init_data = kwargs.copy()
+        init_data["to"] = to
+        init_data["text"] = text_payload
+
+        super().__init__(**init_data)

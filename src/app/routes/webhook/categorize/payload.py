@@ -44,9 +44,9 @@ class MetaData(BaseModel):
 class Value(BaseModel):
     messaging_product: Literal["whatsapp"]
     metadata: MetaData
-    contacts: Optional[List[Contact]] = None
-    messages: Optional[List[Message]] = None
-    statuses: Optional[List[Status]] = None
+    contacts: Optional[List[Contact]] | None = None
+    messages: Optional[List[Message]] | None = None
+    statuses: Optional[List[Status]] | None = None
 
     async def handle(self, db_session: AsyncSession, client_session: ClientSession):
         """Depending on the value Type

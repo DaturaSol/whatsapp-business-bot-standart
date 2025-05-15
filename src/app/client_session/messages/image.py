@@ -7,13 +7,13 @@ from app.client_session.messages.base import WhatsAppRequestTo
 
 
 class ImageBody(BaseModel):
-    id_: Optional[str] = Field(None, alias="id")
+    id_: Optional[str] = Field(default=None, alias="id")
     link: Optional[str] = None
     caption: Optional[str] = None
 
 
 class ImageMessage(WhatsAppRequestTo):
-    type_: Literal["image"] = Field("image", alias="type")
+    type_: Literal["image"] = Field(default="image", alias="type")
     image: ImageBody
 
     def __init__(
@@ -27,5 +27,8 @@ class ImageMessage(WhatsAppRequestTo):
     ):
         image_payload = ImageBody(id=id_, link=link, caption=caption)
 
-        super().__init__(to=to, image=image_payload, **kwargs)
-        
+        init_data = kwargs.copy()
+        init_data["to"] = to
+        init_data["image"] = image_payload
+
+        super().__init__(**init_data)
