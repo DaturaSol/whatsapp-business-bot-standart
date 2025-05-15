@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from app.data_base.db_helper.core import get_async_session_dependency
 from app.client_session import get_async_client_session_dependency
 from app.routes.check_signature import signature_verification_dependency
-from app.routes.webhook.categorize.payload import WebHookPayload
+from app.routes.webhook.models.payload import WebHookPayload
 from app.settings import Settings
 
 log = logging.getLogger(__name__)
