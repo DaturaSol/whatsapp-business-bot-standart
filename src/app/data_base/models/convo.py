@@ -47,7 +47,7 @@ class Convo(Base):
         wa_id: str,
         timestamp: datetime,
         messages: dict,
-        past_message: str = None,
+        past_message: str | None = None,
     ):
         self.whatsapp_message_id = whatsapp_message_id
         self.wa_id = wa_id

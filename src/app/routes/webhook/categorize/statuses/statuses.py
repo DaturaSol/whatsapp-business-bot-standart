@@ -19,7 +19,7 @@ class StatusesBaseModel(BaseModel):
     
     async def handle(self, **_):
         """Default fallback handler if no subclass overrides."""
-        raise NotImplementedError(f"No handler for status {self.status!r}")
+        raise NotImplementedError(f"No handler for status")
 
 
 class OriginObject(BaseModel):

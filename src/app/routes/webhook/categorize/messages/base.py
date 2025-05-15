@@ -26,7 +26,7 @@ class BaseMessageModel(BaseModel):
         self,
         db_session: AsyncSession,
         client_session: ClientSession,
-        contacts: Optional[List[Contact]] = None,
+        contacts: Optional[List[Contact]] | None = None,
     ):
         """Default fallback handler if no subclass overrides."""
         # TODO: Add Data Base interaction, check:
@@ -36,4 +36,5 @@ class BaseMessageModel(BaseModel):
             contact = contacts[0]
             wa_id = contact.wa_id
             name = contact.profile.name
+            
         raise NotImplementedError(f"No handler for Messages")

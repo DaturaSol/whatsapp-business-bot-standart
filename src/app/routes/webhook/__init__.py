@@ -65,7 +65,7 @@ async def webhook_post(
     """Runs whenever we get a post request from the webhook."""
     try:
         raw: bytes = await request.body()
-
+        
         payload = WebHookPayload.model_validate_json(raw)
 
         log.info("Offloading to background task")

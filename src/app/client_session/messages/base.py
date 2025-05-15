@@ -2,7 +2,7 @@
 
 from typing import Literal, Optional
 from pydantic import BaseModel, ConfigDict
-from aiohttp import ClientSession, ClientError, ContentTypeError
+from aiohttp import ClientSession, ClientError, ContentTypeError, ClientTimeout
 from asyncio import TimeoutError
 import logging
 
@@ -25,7 +25,7 @@ class WhatsAppRequest(BaseModel):
     async def send(
         self,
         client_session: ClientSession,
-        timeout: float = 10.0,
+        timeout=ClientTimeout(total=10),
     ) -> None:
         """
         Serializes the model into JSON (with the right field names),
