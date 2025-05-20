@@ -70,7 +70,7 @@ async def webhook_post(
 
         log.info("Offloading to background task")
         background_tasks.add_task(
-            payload.handle,
+            payload.handle, # TODO: Reasign this function to a proper place to avoid all these circular imports
             db_session,  # Since we will need to access the Data Base
             client_session,  # For asynchronous requests
         )  # Here i just pass the functions we define for each payload type

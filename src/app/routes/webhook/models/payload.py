@@ -51,13 +51,13 @@ class Value(BaseModel):
     async def handle(self, db_session: AsyncSession, client_session: ClientSession):
         """Depending on the value Type
         proceeds to the correct task"""
-        if self.messages:
+        if self.messages:  # For now we are only interested on these type of messages
             await self.messages[0].handle(
                 contacts=self.contacts,
                 db_session=db_session,
                 client_session=client_session,
             )
-        elif self.statuses:
+        elif self.statuses: # These we can ignore for complete
             await self.statuses[0].handle()
         else:
             raise ValueError("Unknown payload type")
