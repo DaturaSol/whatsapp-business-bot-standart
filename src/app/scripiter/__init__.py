@@ -7,56 +7,62 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from logging import getLogger
 from typing import Type
 
+from app.routes.webhook.models.payload import Value
+from app.routes.webhook.models.messages import Message
+
 log = getLogger(__name__)
 
 
 class ScriptBaseModel:
     """Abstract Class responsible for running
     scripts"""
-
     def __init__(
         self,
         db_session: AsyncSession,
         client_session: ClientSession,
         registery: dict[str, Type["ScriptBaseModel"]],
+        payload_value: Value,
     ):
-
         self.db_session = db_session
         self.client_session = client_session
         self.registery = registery
+        self.value = payload_value
+        
         # Reference nodes
         self.next: str | None = None  # This points to the next class to be executed
         self.jump: bool = (
             False  # This tells if a webhook is necessary to excute the next script
         )
-        self.expected_type: list[str | None] = (
+        self.expected_type: list[Message | None] = (
             []
         )  # Name of the WebHookPayload Types that are expected 
 
-    async def _fn(self, payload): # TODO
+        
+    async def _fn(self):
         """This function will do most of the script work, send messages,
         do data Base stuff etc etc"""
         raise NotImplementedError
 
-    async def handle(self, payload): # TODO: No typehint, bad code. will Arise in circular imports.
+    async def handle(self):
         """Function resposible to check if subclass has atribute `_fn` and executing it"""
         try:
-            await self._fn(payload)
+            await self._fn() 
         except NotImplementedError as e:
             raise e  # TODO: Implement a better handle for this.
 
         if self.jump and self.next:  # Should execute another class?
             handler_cls = self.registery.get(
-                self.next
+                self.next # Next step we defined inside the class
             )  # Fecthes the next class to be executed
             if handler_cls:
                 next_cls = handler_cls(
                     db_session=self.db_session,
                     client_session=self.client_session,
                     registery=self.registery,
-                )
+                    payload_value=self.value
+                ) # Pass the same information for the next action
 
-                await next_cls.handle(payload)
+                await next_cls.handle()
 
 
 class ScriptBlueprint:

@@ -1,18 +1,19 @@
 """Module responsible for WebHook route"""
 
-from fastapi import APIRouter, Request, Response, BackgroundTasks, Depends
-from fastapi.responses import JSONResponse
-from typing import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
-from aiohttp import ClientSession
 import logging
+from typing import Annotated
+from aiohttp import ClientSession
 from pydantic import ValidationError
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Request, Response, BackgroundTasks, Depends
 
-from app.data_base.db_helper.core import get_async_session_dependency
-from app.client_session import get_async_client_session_dependency
-from app.routes.check_signature import signature_verification_dependency
-from app.routes.webhook.models.payload import WebHookPayload
 from app.settings import Settings
+from app.routes.webhook.handler import handle_payload
+from app.routes.webhook.models.payload import WebHookPayload
+from app.client_session import get_async_client_session_dependency
+from app.data_base.db_helper.core import get_async_session_dependency
+from app.routes.check_signature import signature_verification_dependency
 
 log = logging.getLogger(__name__)
 
@@ -65,20 +66,21 @@ async def webhook_post(
     """Runs whenever we get a post request from the webhook."""
     try:
         raw: bytes = await request.body()
-        
+
         payload = WebHookPayload.model_validate_json(raw)
 
         log.info("Offloading to background task")
         background_tasks.add_task(
-            payload.handle, # TODO: Reasign this function to a proper place to avoid all these circular imports
-            db_session,  # Since we will need to access the Data Base
-            client_session,  # For asynchronous requests
-        )  # Here i just pass the functions we define for each payload type
-
+            handle_payload,
+            payload,
+            db_session,
+            client_session,
+        ) # this function should take care of what happens on each class
         return JSONResponse(
             {"status": "success"}, status_code=200
         )  # Always good to send this back, in order to not get blocked, just say you got the response
-    # TODO: proper fault to facebook for bad webhooks
+        
+    # TODO: Proper fault to facebook for bad webhooks
     except ValidationError as e:
         log.exception(f"[Malformed data]: {e}")
         return JSONResponse({"error": "Internal Server Error"}, status_code=500)

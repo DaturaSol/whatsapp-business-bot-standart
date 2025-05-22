@@ -28,8 +28,6 @@
 
 from pydantic import BaseModel, Field
 from typing import Literal, List, Optional
-from aiohttp import ClientSession
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.routes.webhook.models.messages import Message
 from app.routes.webhook.models.statuses import Status
@@ -48,19 +46,6 @@ class Value(BaseModel):
     messages: Optional[List[Message]] | None = None
     statuses: Optional[List[Status]] | None = None
 
-    async def handle(self, db_session: AsyncSession, client_session: ClientSession):
-        """Depending on the value Type
-        proceeds to the correct task"""
-        if self.messages:  # For now we are only interested on these type of messages
-            await self.messages[0].handle(
-                contacts=self.contacts,
-                db_session=db_session,
-                client_session=client_session,
-            )
-        elif self.statuses: # These we can ignore for complete
-            await self.statuses[0].handle()
-        else:
-            raise ValueError("Unknown payload type")
 
 
 class Change(BaseModel):
@@ -77,9 +62,3 @@ class WebHookPayload(BaseModel):
     object_: Literal["whatsapp_business_account"] = Field(..., alias="object")
     entry: List[Entry]
 
-    async def handle(self, db_session: AsyncSession, client_session: ClientSession):
-        """Assigns which taks should be done depending
-        on what the payload is composed of."""
-        await self.entry[0].changes[0].value.handle(
-            db_session=db_session, client_session=client_session
-        )
