@@ -18,5 +18,5 @@ class StatusErrorObject(
 
 
 class StatusFailed(StatusesBaseModel):
-    status: Literal["failed"]
+    status: Literal["failed"] = "failed"
     errors: List[StatusErrorObject]

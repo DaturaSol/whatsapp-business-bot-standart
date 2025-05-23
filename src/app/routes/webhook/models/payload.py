@@ -47,7 +47,6 @@ class Value(BaseModel):
     statuses: Optional[List[Status]] | None = None
 
 
-
 class Change(BaseModel):
     value: Value
     field: Literal["messages"]
@@ -61,4 +60,3 @@ class Entry(BaseModel):
 class WebHookPayload(BaseModel):
     object_: Literal["whatsapp_business_account"] = Field(..., alias="object")
     entry: List[Entry]
-

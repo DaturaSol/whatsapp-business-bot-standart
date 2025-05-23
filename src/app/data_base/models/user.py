@@ -68,7 +68,7 @@ class User(Base):
     email = Column(String)
     birthday = Column(DateTime)
     summary = Column(String)
-    current_step = Column(String, default="WellComeUser")
+    current_step = Column(String, default="HelloUser")
 
     user_convos = relationship(
         "Convo",
@@ -87,7 +87,7 @@ class User(Base):
         email: str | None = None,
         birthday: datetime | None = None,
         summary: str | None = None,
-        current_step: str = "WellComeUser",
+        current_step: str = "HelloUser",
     ):
         self.wa_id = wa_id
         self.formatted_name = formatted_name

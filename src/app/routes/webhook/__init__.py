@@ -75,11 +75,11 @@ async def webhook_post(
             payload,
             db_session,
             client_session,
-        ) # this function should take care of what happens on each class
+        )  # this function should take care of what happens on each class
         return JSONResponse(
             {"status": "success"}, status_code=200
         )  # Always good to send this back, in order to not get blocked, just say you got the response
-        
+
     # TODO: Proper fault to facebook for bad webhooks
     except ValidationError as e:
         log.exception(f"[Malformed data]: {e}")

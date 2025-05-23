@@ -23,6 +23,7 @@ async def create_user(
         new_user = User(wa_id=wa_id, formatted_name=formatted_name)
 
         async_session.add(new_user)
+        await async_session.commit()
         return new_user
 
     except Exception as e:
@@ -35,6 +36,7 @@ async def get_user(
     wa_id: str,
 ) -> User | None:
     try:
+        log.info("Looking for User")
         result = await async_session.execute(select(User).where(User.wa_id == wa_id))  # type: ignore
         # Pylance will throw some stupid erro about the type of wa_id, i dont have patieince for this now
         return result.scalar_one_or_none()
@@ -49,6 +51,7 @@ async def get_or_create_user(
     try:
         p_user = await get_user(async_session=async_session, wa_id=wa_id)
         if not p_user:
+            log.info("User not Found")
             p_user = await create_user(
                 async_session=async_session, wa_id=wa_id, formatted_name=formatted_name
             )

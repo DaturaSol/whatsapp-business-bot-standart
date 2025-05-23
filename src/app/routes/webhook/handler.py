@@ -18,7 +18,8 @@ async def handle_payload(
     client_session: ClientSession,
 ):
     """Function resposible for assigning an activity
-    for each type of payload"""
+    for each type of payload
+    """
 
     value = (
         payload.entry[0].changes[0].value
@@ -30,10 +31,10 @@ async def handle_payload(
         # There are interesting cases here, but i cant care for that now
         return  # We just return, nothing interesting to do.
 
-    if (
-        not hasattr(value, "messages") or not value.messages
+    if not hasattr(
+        value, "messages"
     ):  # For now i am only interested if i get a message from an user
-        return # Returns, nothing interesting to do.
+        return  # Returns, nothing interesting to do.
 
     contact = value.contacts[
         0
