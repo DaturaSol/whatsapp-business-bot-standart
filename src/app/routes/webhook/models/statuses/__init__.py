@@ -6,7 +6,4 @@ from app.routes.webhook.models.statuses.delivered import StatusDelivered
 from app.routes.webhook.models.statuses.failed import StatusFailed
 
 
-
-
-
 Status = Union[StatusSent, StatusDelivered, StatusRead, StatusFailed]

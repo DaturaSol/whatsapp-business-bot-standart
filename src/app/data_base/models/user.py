@@ -12,6 +12,7 @@ from datetime import datetime
 
 from app.data_base.models.base import Base
 
+
 class User(Base):
     """This class is thought on top of WhatsApp Business API
     Contact info.
@@ -67,6 +68,7 @@ class User(Base):
     email = Column(String)
     birthday = Column(DateTime)
     summary = Column(String)
+    current_step = Column(String, default="HelloUser")
 
     user_convos = relationship(
         "Convo",
@@ -85,6 +87,7 @@ class User(Base):
         email: str | None = None,
         birthday: datetime | None = None,
         summary: str | None = None,
+        current_step: str = "HelloUser",
     ):
         self.wa_id = wa_id
         self.formatted_name = formatted_name
@@ -94,3 +97,4 @@ class User(Base):
         self.email = email
         self.birthday = birthday
         self.summary = summary
+        self.current_step = current_step

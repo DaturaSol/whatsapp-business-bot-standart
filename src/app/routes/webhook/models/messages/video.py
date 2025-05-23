@@ -8,6 +8,7 @@ from app.routes.webhook.models.contacts import Contact
 
 log = logging.getLogger(__name__)
 
+
 class VideoObject(MediaBaseObject):
     caption: Optional[str] = None
 
@@ -15,13 +16,3 @@ class VideoObject(MediaBaseObject):
 class VideoMessage(BaseMessageModel):
     type: Literal["video"]
     video: VideoObject
-    
-    async def handle(
-        self,
-        db_session: AsyncSession,
-        client_session: ClientSession,
-        contacts: Optional[List[Contact]] = None,
-    ):
-        log.info(f"[SHA256]: {self.video.sha256}")
-        
-        # raise NotImplementedError("No implemantiotn for video")

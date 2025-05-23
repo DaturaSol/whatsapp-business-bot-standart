@@ -5,7 +5,7 @@ import logging
 log = logging.getLogger(__name__)
 
 class Pricing(BaseModel):
-    billable: str
+    billable: bool
     pricing_model: str
     category: str
 
@@ -16,11 +16,6 @@ class StatusesBaseModel(BaseModel):
     recipient_id: str
     pricing: Optional[Pricing] = None
     
-    async def handle(self):
-        """Default fallback handler if no subclass overrides."""
-        log.info('Status captured by webhook')
-        raise NotImplementedError(f"No handler for Statuses")
-
 
 class OriginObject(BaseModel):
     type: str

@@ -19,15 +19,3 @@ class TextMessage(BaseMessageModel):
     type: Literal["text"]
     text: TextObject
 
-    async def handle(
-        self,
-        db_session: AsyncSession,
-        client_session: ClientSession,
-        contacts: List[Contact] | None,
-    ):
-        """Most messages will be of this type.
-        All Text Messages WebHooks comes with
-        contacts information"""
-        log.info(self.text)
-        
-        raise NotImplementedError(f"No handler for Text Message")
