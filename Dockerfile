@@ -3,7 +3,8 @@ FROM python:3.13.2-slim AS base
 ENV POETRY_VERSION=2.1.1 \
     POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONPATH="/main/src"
 
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
@@ -33,5 +34,5 @@ RUN poetry install --no-root --no-interaction --no-ansi
 COPY . .
 
 # 8. Run the aplication
-CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "$PORT", "src.main.py:app"]
+CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "8080", "src.main.py:app"]
 
