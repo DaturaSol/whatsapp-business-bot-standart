@@ -18,7 +18,7 @@ LOG_FILE_BACKUP_COUNT = 5
 LOG_FILE_MAX_BYTES = 1024 * 1024 * 10  # 10 MB
 LOG_FILE_PATH = ".log"
 # Base format string (everything AFTER the 'LEVELNAME: ' part)
-LOG_FORMAT_BASE = "[%(requestId)s] [%(taskName)s] - %(name)s:%(lineno)d - %(message)s"
+LOG_FORMAT_BASE = "[%(requestId)s] - %(name)s:%(lineno)d - %(message)s"
 # Date format
 LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
 # Width for the 'LEVELNAME:' prefix including padding

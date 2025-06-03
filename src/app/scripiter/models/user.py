@@ -454,9 +454,9 @@ class PersonalInfoMenu(ScriptBaseModel):
             "Chapter_Three": chapter.get("C3"),
             "Chapter_Four": chapter.get("C4"),
             "Exercise_One": exercise.get("E1"),
-            "Exercise_Two": exercise.get("E1"),
-            "Exercise_Three": exercise.get("E1"),
-            "Exercise_Four": exercise.get("E1"),
+            "Exercise_Two": exercise.get("E2"),
+            "Exercise_Three": exercise.get("E3"),
+            "Exercise_Four": exercise.get("E4"),
         }
 
         message = TemplateMessage(

@@ -17,7 +17,7 @@ from app.routes.webhook.models.messages.location import LocationMessage
 from app.routes.webhook.models.messages.adds import AidsMessage
 from app.routes.webhook.models.messages.unsuported import UnsupportedMessage
 from app.routes.webhook.models.messages.unknown import UnknownMessage
-
+from app.routes.webhook.models.messages.nfm_reply import NfmReplyMessage
 
 Message = Union[
     TextMessage,
@@ -34,4 +34,5 @@ Message = Union[
     AidsMessage,
     UnsupportedMessage,
     UnknownMessage,
+    NfmReplyMessage,
 ]

@@ -40,7 +40,7 @@ class InteractiveListObject(BaseModel):
     header: Optional[IntListHeaderObject] = None
     body: IntListBodyObject
     footer: Optional[IntListFooterObject] = None
-    actions: IntListSectionsObject
+    action: IntListSectionsObject
 
 
 class InteractiveListMessage(WhatsAppRequestTo):
@@ -53,7 +53,7 @@ class InteractiveListMessage(WhatsAppRequestTo):
         body_payload = IntListBodyObject(text=body_text)
 
         interactive_payload = InteractiveListObject(
-            actions=action_payload, body=body_payload
+            action=action_payload, body=body_payload
         )
 
         init_data = kwargs.copy()
@@ -86,6 +86,6 @@ class InteractiveListMessage(WhatsAppRequestTo):
         ```
         """
         section = IntListSectionObject.model_validate(section_data)
-        self.interactive.actions.sections.append(section)
+        self.interactive.action.sections.append(section)
 
         return self

@@ -6,9 +6,9 @@ Implement other Tables as you wish, but this
 will be used as defined here along the program.
 """
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, JSON
 from sqlalchemy.orm import relationship
-from datetime import datetime
+# from datetime import datetime
 
 from app.data_base.models.base import Base
 
@@ -62,13 +62,20 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     wa_id = Column(String, nullable=False, unique=True, index=True)
     formatted_name = Column(String)
+    last_name = Column(String)
     company = Column(String)
     department = Column(String)
     title = Column(String)
     email = Column(String)
-    birthday = Column(DateTime)
+    birthday = Column(String)
     summary = Column(String)
     current_step = Column(String, default="HelloUser")
+    # Best would be to add these to a new class, but i am short on time
+    current_chapter = Column(String, default="ChapterOne")
+    current_exercise = Column(String, default="ExerciseOne")
+    exercise_grade = Column(JSON, default={"E1": 0, "E2": 0, "E3": 0, "E4": 0})
+    chapter_grade = Column(JSON, default={"C1": 0, "C2": 0, "C3": 0, "C4": 0})
+    past_question = Column(String)
 
     user_convos = relationship(
         "Convo",
@@ -81,16 +88,23 @@ class User(Base):
         self,
         wa_id: str,
         formatted_name: str | None = None,
+        last_name: str | None = None,
         company: str | None = None,
         department: str | None = None,
         title: str | None = None,
         email: str | None = None,
-        birthday: datetime | None = None,
+        birthday: str | None = None,
         summary: str | None = None,
         current_step: str = "HelloUser",
+        current_chapter: str = "ChapterOne",
+        current_exercise: str = "ExerciseOne",
+        exercise_grade: dict  = {"E1": "❎", "E2": "❎", "E3": "❎", "E4": "❎"},
+        chapter_grade: dict  = {"C1": "❎", "C2": "❎", "C3": "❎", "C4": "❎"},
+        past_question: str | None = None
     ):
         self.wa_id = wa_id
         self.formatted_name = formatted_name
+        self.last_name = last_name
         self.company = company
         self.department = department
         self.title = title
@@ -98,3 +112,8 @@ class User(Base):
         self.birthday = birthday
         self.summary = summary
         self.current_step = current_step
+        self.current_chapter = current_chapter
+        self.current_exercise = current_exercise
+        self.exercise_grade = exercise_grade
+        self.chapter_grade = chapter_grade
+        self.past_question = past_question
