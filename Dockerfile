@@ -1,14 +1,5 @@
-# Dockerfile for my WhatsApp Bot
-
-# 1. Get python image. 
-# Sadly i could not find the Free Threaded image.
 FROM python:3.13.2-slim AS base
 
-# 2. Set environment variables
-# - Prevents Python from writing .pyc files;
-# - Ensures Python output (like print) is sent straight to terminal without being buffered;
-# - Configures Poetry installation location and behaviour.
-# Poetry settings 
 ENV POETRY_VERSION=2.1.1 \
     POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1 \
