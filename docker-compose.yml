@@ -1,0 +1,19 @@
+services:
+  whatsapp_bot:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: stupid_bot
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+    volumes:
+      - ./src:/main/src
+       - poetry_venv:/main/.venv
+    restart: on-failure 
+  
+volumes:
+  poetry_venv: 
