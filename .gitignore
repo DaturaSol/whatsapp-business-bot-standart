@@ -23,7 +23,7 @@ __pycache__/
 db/
 assets/
 tests/
+examples/
 
 # Dont ignore 
-!assets/markdown/images/
 !deploy.ps1
