@@ -10,9 +10,7 @@ settings = Settings()
 
 a = {
     "settings.webhook_verify_token": settings.webhook_verify_token,
-    "is_1234": settings.webhook_verify_token == "1234",
-    "account_id": settings.whatsapp_business_account_id == "653355860631136",
-    "id": settings.whatsapp_business_account_id
+    "is_1234": settings.webhook_verify_token == "1234"
 }
 
 

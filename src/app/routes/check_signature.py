@@ -13,7 +13,7 @@ settings = Settings()
 
 APP_SECRET = settings.app_secret
 
-log.info("APP Secret properly loaded")
+log.debug("APP Secret properly loaded")
 
 
 def validate_signature(payload: str, signature: str) -> bool:

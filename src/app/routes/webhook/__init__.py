@@ -69,7 +69,7 @@ async def webhook_post(
 
         payload = WebHookPayload.model_validate_json(raw)
 
-        log.info("Offloading to background task")
+        log.debug("Offloading to background task")
         background_tasks.add_task(
             handle_payload,
             payload,

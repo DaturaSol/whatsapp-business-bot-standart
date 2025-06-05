@@ -1,5 +1,7 @@
 """File contains logging configuration"""
 
+# NOTE: Moss of this file was made by AI, i cant bother with it.
+
 import logging
 import logging.handlers
 import os

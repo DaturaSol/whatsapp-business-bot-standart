@@ -93,7 +93,7 @@ def create_async_session(engine: AsyncEngine) -> async_sessionmaker[AsyncSession
         async_sessionmaker[AsyncSession]: A `async_sessionmaker` containing
         a list of `AsyncSession` to be used.
     """
-    log.info(f"Creating async Session")
+    log.debug(f"Creating async Session")
 
     local_async_session = async_sessionmaker(
         bind=engine, class_=AsyncSession, expire_on_commit=False
@@ -113,17 +113,17 @@ async def get_async_session(engine: AsyncEngine):
     local_async_session = create_async_session(engine)
     async with local_async_session() as async_session:
         try:
-            log.info(f"Starting async Session")
+            log.debug(f"Starting async Session")
             yield async_session
             await async_session.commit()
-            log.info(f"Commiting Session")
+            log.debug(f"Commiting Session")
         except Exception as e:
             log.warning(f"Rolling back Session")
             log.exception(f"Exception: {e}")
             await async_session.rollback()
             raise e
         finally:
-            log.info(f"Closing async Session")
+            log.debug(f"Closing async Session")
             await async_session.close()
 
 

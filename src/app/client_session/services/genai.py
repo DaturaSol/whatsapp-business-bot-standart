@@ -1,9 +1,10 @@
 """Very basic very primitive i would use this at the end"""
 
-from logging import getLogger
-import asyncio
-import json  # For parsing error responses if needed, though mostly relying on aiohttp's messages
+import json
 import aiohttp
+import asyncio
+from typing import Any
+from logging import getLogger
 from aiohttp import ClientSession, ClientTimeout, ClientResponse
 
 from app.settings import Settings
@@ -14,6 +15,7 @@ log = getLogger(__name__)
 setting = Settings()
 
 GEMINI_API_KEY = setting.gemini_api_key
+
 
 async def _make_gemini_request(
     client_session: ClientSession, model_name: str, prompt: str, timeout_seconds: int
@@ -31,9 +33,8 @@ async def _make_gemini_request(
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
-    data = {"contents": [{"parts": [{"text": prompt}]}]}
-    # Configure safety settings as per your needs. BLOCK_NONE can be risky.
-    data["safetySettings"] = [  # type: ignore
+    data: dict[str, Any] = {"contents": [{"parts": [{"text": prompt}]}]}
+    data["safetySettings"] = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
         {
             "category": "HARM_CATEGORY_HATE_SPEECH",
@@ -90,15 +91,13 @@ async def get_ai_response(
     timeout_seconds: int = 60,  # Default timeout
 ) -> str | None:
     # Consider making models_to_try a parameter or loading from settings for flexibility
-    # "gemini-2.0-flash" is likely not a valid model name currently.
-    # Use official model names like "gemini-1.5-pro-latest" or "gemini-1.5-flash-latest".
     models_to_try = [
         "gemini-2.0-flash",
         "gemini-1.5-flash",
     ]  # Example models
 
     for model_name in models_to_try:
-        log.info(f"Attempting model: {model_name}")
+        log.debug(f"Attempting model: {model_name}")
         try:
             status_code, response_data = await _make_gemini_request(
                 client_session=client_session,
@@ -158,7 +157,7 @@ async def get_ai_response(
                             and content["parts"][0].get("text")
                         ):
                             text_response = content["parts"][0]["text"]
-                            log.info(f"Success with model: {model_name}")
+                            log.debug(f"Success with model: {model_name}")
                             return text_response
                         else:
                             log.warning(
@@ -251,21 +250,3 @@ async def get_ai_response(
         f"All models in list {models_to_try} failed for the prompt (first 30 chars): '{prompt[:30]}...'."
     )
     return None
-
-
-
-# async def basic_bitch(client_session: ClientSession, prompt: str):
-#     model="gemini-1.5-flash"
-#     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-#     header = {"Content-Type": "application/json"}
-#     data = {"contents": [{"parts": [{"text": prompt}]}]}
-
-#     try:
-#         async with client_session.post(
-#             url=url, headers=header, json=data, timeout=10
-#         ) as response:
-#             json_response = await response.json()
-#             return json_response
-
-#     except Exception as e:
-#         raise e
