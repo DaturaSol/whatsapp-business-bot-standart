@@ -6,35 +6,37 @@ import os
 import sys
 import asyncio
 import contextvars
-import json_log_formatter  # For Cloud Run JSON logs
-
-# TODO: Fix this whole file, i asked for the ai to do it, and it is full of unecessary stuff...
-# For now this is not important, but probably it will carry performance issues
-
+from pythonjsonlogger import jsonlogger  # Import python-json-logger
 
 # --- Configuration Constants ---
-LOG_LEVEL = logging.INFO
+LOG_LEVEL_STR = os.environ.get("LOG_LEVEL", "INFO").upper()
+LOG_LEVEL_MAP = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+LOG_LEVEL = LOG_LEVEL_MAP.get(LOG_LEVEL_STR, logging.INFO)
+
 LOG_FILE_BACKUP_COUNT = 5
 LOG_FILE_MAX_BYTES = 1024 * 1024 * 10  # 10 MB
 LOG_FILE_PATH = ".log"
-# Base format string (everything AFTER the 'LEVELNAME: ' part)
-LOG_FORMAT_BASE = "[%(requestId)s] - %(name)s:%(lineno)d - %(message)s"
-# Date format
-LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
-# Width for the 'LEVELNAME:' prefix including padding
-LOG_LEVEL_WIDTH = 9  # (e.g., len("CRITICAL:") + 1 space)
+LOG_FORMAT_BASE = (
+    "[%(requestId)s] - %(name)s:%(lineno)d - %(message)s"  # For local text
+)
+LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"  # For local text
+LOG_LEVEL_WIDTH = 9
 
-# --- ANSI Color Codes ---
+# --- ANSI Color Codes (for local only) ---
 RESET_SEQ = "\033[0m"
 COLOR_SEQ = "\033[1;%dm"
-BOLD_SEQ = "\033[1m"
-
 COLORS = {
-    "DEBUG": COLOR_SEQ % 34,  # Blue
-    "INFO": COLOR_SEQ % 32,  # Green
-    "WARNING": COLOR_SEQ % 33,  # Yellow
-    "ERROR": COLOR_SEQ % 31,  # Red
-    "CRITICAL": COLOR_SEQ % 31,  # Red
+    "DEBUG": COLOR_SEQ % 34,
+    "INFO": COLOR_SEQ % 32,
+    "WARNING": COLOR_SEQ % 33,
+    "ERROR": COLOR_SEQ % 31,
+    "CRITICAL": COLOR_SEQ % 31,
 }
 
 # --- Context Variable for Request ID ---
@@ -55,16 +57,14 @@ class TaskContextFilter(logging.Filter):
             record.taskName = task.get_name() if task else "NoTask"
         except RuntimeError:
             record.taskName = "NoTaskContext"
+        # Add default for fields that python-json-logger might expect if not present
+        if not hasattr(record, "requestId"):
+            record.requestId = "NotSet"
         return True
 
 
-# --- Custom Formatter for Level Alignment and Color ---
-class AlignedColoredFormatter(logging.Formatter):
-    """
-    Formats logs with LEVELNAME: prefix aligned to a fixed width,
-    optionally adding ANSI color codes.
-    """
-
+# --- Custom Formatters ---
+class AlignedColoredFormatter(logging.Formatter):  # Same as before
     def __init__(
         self,
         fmt=LOG_FORMAT_BASE,
@@ -72,127 +72,102 @@ class AlignedColoredFormatter(logging.Formatter):
         use_color=True,
         level_width=LOG_LEVEL_WIDTH,
     ):
-        # Initialize with the BASE format (message part)
         super().__init__(fmt=fmt, datefmt=datefmt)
         self.use_color = use_color
         self.level_width = level_width
+        self._base_formatter = logging.Formatter(fmt, datefmt)
 
     def format(self, record):
-        # 1. Format the main message part first using the base format string
-        message = super().format(record)
-
-        # 2. Create the level prefix and pad it
+        message = self._base_formatter.format(record)
+        timestamp = self.formatTime(record, self.datefmt)
         levelname = record.levelname
         level_prefix = f"{levelname}:"
-        # Use left-alignment '<' and the specified width
         padded_prefix = f"{level_prefix:<{self.level_width}}"
-
-        # 3. Add color if applicable
-        is_tty = (
-            hasattr(sys.stdout, "isatty")
-            and sys.stdout.isatty()
-            or hasattr(sys.stderr, "isatty")
-            and sys.stderr.isatty()
-        )
-
+        is_tty = hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
         if self.use_color and levelname in COLORS and is_tty:
             colored_padded_prefix = f"{COLORS[levelname]}{padded_prefix}{RESET_SEQ}"
-            # Add timestamp at the beginning (optional, could be part of base fmt)
-            # timestamp = self.formatTime(record, self.datefmt)
-            # return f"{timestamp} {colored_padded_prefix} {message}"
-            return f"{colored_padded_prefix} {message}"  # Timestamp handled by base if needed
+            return f"{timestamp} {colored_padded_prefix} {message}"
         else:
-            # No color, just the padded prefix
-            # timestamp = self.formatTime(record, self.datefmt)
-            # return f"{timestamp} {padded_prefix} {message}"
-            return f"{padded_prefix} {message}"  # Timestamp handled by base if needed
+            return f"{timestamp} {padded_prefix} {message}"
+
+
+class CustomJsonFormatter(jsonlogger.JsonFormatter): # type: ignore
+    def add_fields(self, log_record, record, message_dict):
+        super(CustomJsonFormatter, self).add_fields(log_record, record, message_dict)
+        # Rename fields for GCP compatibility
+        if "levelname" in log_record:
+            log_record["severity"] = log_record.pop("levelname")
+        else:
+            log_record["severity"] = record.levelname  # Default if not in log_record
+
+        if (
+            "asctime" in log_record
+        ):  # python-json-logger can add asctime if in fmt string
+            log_record["timestamp"] = log_record.pop("asctime")
+        else:  # Or format it ourselves
+            log_record["timestamp"] = self.formatTime(
+                record, self.datefmt or logging.Formatter.default_time_format
+            )
+
+        # Add GCP source location
+        log_record["logging.googleapis.com/source_location"] = {
+            "file": record.pathname,
+            "line": record.lineno,
+            "function": record.funcName,
+        }
+        # Add custom fields if they exist on the record
+        if hasattr(record, "requestId"):
+            log_record["requestId"] = record.requestId # type: ignore
+        if hasattr(record, "taskName"):
+            log_record["taskName"] = record.taskName
 
 
 # --- Logger Configuration Function ---
 def setup_logging():
-    """Configures logging based on execution environment (Cloud Run vs Local)."""
-    logger = logging.getLogger()  # Get root logger
-    logger.setLevel(LOG_LEVEL)  # Set level on ROOT logger
+    logger = logging.getLogger()
+    logger.setLevel(LOG_LEVEL)
 
-    # Clear existing handlers to avoid duplicates during reloads
     if logger.hasHandlers():
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
             handler.close()
 
-    # Create filters
     request_filter = RequestIdFilter()
-    task_filter = TaskContextFilter()
+    task_filter = (
+        TaskContextFilter()
+    )  # Ensure this adds default requestId if not present
 
-    # Check if running in Google Cloud Run
-    RUNNING_IN_CLOUD = os.environ.get("K_SERVICE") is not None
-
-    # --- CONSOLE Handler ---
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(LOG_LEVEL)  # <<< SET LEVEL ON HANDLER
+    console_handler.setLevel(LOG_LEVEL)
     console_handler.addFilter(request_filter)
     console_handler.addFilter(task_filter)
 
-    # --- FILE Handler (initialized only if needed) ---
-    file_handler = None  # Initialize as None
+    file_handler = None
+    RUNNING_IN_CLOUD = os.environ.get("K_SERVICE") is not None
 
     if RUNNING_IN_CLOUD:
-        # Configure JSON formatter for Console Handler
-        # ... (CloudLoggingJSONFormatter class definition) ...
-        class CloudLoggingJSONFormatter(json_log_formatter.JSONFormatter):
-            def format(self, record):
-                json_record = super().format(record)
-                severity_map = {
-                    "DEBUG": "DEBUG",
-                    "INFO": "INFO",
-                    "WARNING": "WARNING",
-                    "ERROR": "ERROR",
-                    "CRITICAL": "CRITICAL",
-                }
-                # TODO: Fix horrible code, honestly i hate this function. 
-                json_record["severity"] = severity_map.get(record.levelname, "DEFAULT") # type: ignore Atrocious codding for my part
-                json_record["logging.googleapis.com/source_location"] = { # type: ignore
-                    "file": record.pathname,
-                    "line": record.lineno,
-                    "function": record.funcName,
-                }
-                # Ensure message field exists and handle potential formatting issues
-                try:
-                    json_record["message"] = record.getMessage() # type: ignore
-                except Exception as e:
-                    json_record["message"] = f"Error formatting log message: {e}" # type: ignore
-                    json_record["original_log_args"] = ( # type: ignore
-                        record.args
-                    )  # Add original args for debugging
-                return json_record
-
-        formatter_console = CloudLoggingJSONFormatter(
-            {  # Fields for JSON output
-                "timestamp": "asctime",
-                "name": "name",
-                "taskName": "taskName",
-                "requestId": "requestId",
-            }, # type: ignore
-            datefmt=LOG_FORMAT_DATE,  # Or ISO format
-        )
-        console_handler.setFormatter(formatter_console)
         print(
-            "INFO: Running in Cloud Run: Configured JSON logging to console.",
+            "INFO: Running in Cloud Run: Configuring JSON logging (python-json-logger) to console.",
             file=sys.stderr,
         )
-
-    else:  # Local environment
-        # Configure Aligned/Colored formatter for Console Handler
-        formatter_console = AlignedColoredFormatter(
-            fmt=LOG_FORMAT_BASE, datefmt=LOG_FORMAT_DATE, use_color=True
-        )
+        # Define the format string for fields you want from the LogRecord
+        # These will be keys in `log_record` dict passed to `add_fields`
+        # The `message` field is handled specially by python-json-logger
+        log_format = "%(asctime)s %(levelname)s %(name)s %(module)s %(funcName)s %(lineno)d %(message)s %(requestId)s %(taskName)s"
+        formatter_console = CustomJsonFormatter(
+            log_format, datefmt=LOG_FORMAT_DATE
+        )  # Pass datefmt here too
         console_handler.setFormatter(formatter_console)
+    else:  # Local environment
         print(
             f"{COLORS.get('INFO', '')}INFO:{RESET_SEQ}     Running Locally: Configured colored standard logging to console.",
             file=sys.stderr,
         )
+        formatter_console = AlignedColoredFormatter(
+            fmt=LOG_FORMAT_BASE, datefmt=LOG_FORMAT_DATE, use_color=True
+        )
+        console_handler.setFormatter(formatter_console)
 
-        # --- FILE Handler (Only for Local) ---
         log_dir = os.path.dirname(LOG_FILE_PATH)
         if log_dir and not os.path.exists(log_dir):
             try:
@@ -202,7 +177,6 @@ def setup_logging():
                     f"Warning: Could not create log directory {log_dir}: {e}",
                     file=sys.stderr,
                 )
-
         try:
             file_handler = logging.handlers.RotatingFileHandler(
                 LOG_FILE_PATH,
@@ -210,15 +184,13 @@ def setup_logging():
                 backupCount=LOG_FILE_BACKUP_COUNT,
                 encoding="utf-8",
             )
-            file_handler.setLevel(LOG_LEVEL)  # <<< SET LEVEL ON HANDLER
-            # Configure Aligned formatter (no color) for File Handler
+            file_handler.setLevel(LOG_LEVEL)
             formatter_file = AlignedColoredFormatter(
                 fmt=LOG_FORMAT_BASE, datefmt=LOG_FORMAT_DATE, use_color=False
             )
             file_handler.setFormatter(formatter_file)
             file_handler.addFilter(request_filter)
             file_handler.addFilter(task_filter)
-            # Add file handler to ROOT logger (for app logs)
             logger.addHandler(file_handler)
             print(
                 f"{COLORS.get('INFO', '')}INFO:{RESET_SEQ}     Running Locally: Configured rotating file logging to {LOG_FILE_PATH}",
@@ -226,36 +198,24 @@ def setup_logging():
             )
         except Exception as e:
             print(f"Error: Failed to configure file logging: {e}", file=sys.stderr)
-            file_handler = None  # Ensure it's None if setup fails
+            file_handler = None
 
-    # Add console handler to ROOT logger (for app logs)
     logger.addHandler(console_handler)
 
     # --- Configure Uvicorn Loggers ---
-    # Apply the *same handlers* (with levels already set) to Uvicorn's loggers
     for log_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
         uvicorn_logger = logging.getLogger(log_name)
-        # Clear existing handlers Uvicorn might have added forcefully
         if uvicorn_logger.hasHandlers():
             for handler in uvicorn_logger.handlers[:]:
                 uvicorn_logger.removeHandler(handler)
                 handler.close()
-        # Crucial: Prevent Uvicorn logs from bubbling up to root logger's handlers
-        # (which would cause duplicates since we add handlers directly below)
         uvicorn_logger.propagate = False
-
-        # Set the logger level itself (controls if messages *reach* the handlers)
-        # You might want uvicorn.access at INFO, but uvicorn/uvicorn.error matching LOG_LEVEL
         if log_name == "uvicorn.access":
-            uvicorn_logger.setLevel(logging.INFO)  # Capture all access logs
+            uvicorn_logger.setLevel(logging.INFO)
         else:
-            uvicorn_logger.setLevel(
-                LOG_LEVEL
-            )  # Match app's level for general/error logs
-
-        # Add the configured handler(s) directly to this Uvicorn logger
+            uvicorn_logger.setLevel(LOG_LEVEL)
         uvicorn_logger.addHandler(console_handler)
-        if file_handler:  # Add file handler if it exists (local only)
+        if file_handler:
             uvicorn_logger.addHandler(file_handler)
 
     final_log = logging.getLogger(__name__)

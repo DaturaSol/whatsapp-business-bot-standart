@@ -40,7 +40,7 @@ async def verify(request: Request) -> Response:
             return Response(challenge, media_type="text/plain", status_code=200)
 
         else:
-            log.error("Verification failed")
+            log.error(f"Verification failed: {WEBHOOK_VERIFY_TOKEN} - {mode} - {token} - [{token==WEBHOOK_VERIFY_TOKEN}]")
 
             return JSONResponse(
                 {"status": "error", "message": "Verification failed"}, status_code=403

@@ -24,6 +24,7 @@ __pycache__/
 
 # Etc
 .zrok.ps1
+*.ps1
 *.log
 *.md
 db/

@@ -16,10 +16,9 @@ __pycache__/
 
 # Git
 .git
-#.gitignore
 
 # Etc
-.zrok.ps1
+*.ps1
 *.log
 db/
 assets/
@@ -27,3 +26,4 @@ tests/
 
 # Dont ignore 
 !assets/markdown/images/
+!deploy.ps1
