@@ -23,59 +23,38 @@ from app.client_session.messages.models.button import InteractiveButtonMessage
 
 log = getLogger(__name__)
 
-user_bp = ScriptBlueprint()
+welcome_bp = ScriptBlueprint()
 
-@user_bp.register()
-class UserMenu(ScriptBaseModel):
-    """User Main menu also Known as Painel de Controle, here they can choose
-    the subject they want to study."""
+@welcome_bp.register()
+class WellComeUser(ScriptBaseModel):
+    """First Message the User sees when speaking with the bot, 
+    the user should not be redirect to this."""
     async def _fn(self):
         contatcs = self.value.contacts
         if not contatcs:
             return
         contatc = contatcs[0]
         wa_id = contatc.wa_id
-
-        header = "Painel de Controle"
-        body = (
-            "Bem-vindo(a) ao seu Painel de Controle! 🚀\n\n"
-            
-            "Este é o seu centro de comando." 
-            "A partir daqui, você pode navegar pelas diferentes "
-            "funcionalidades e configurações que tenho disponíveis no momento.\n\n"
-            
-            "Explore as opções para personalizar sua experiência, "
-            "acessar módulos de estudo ou gerenciar suas preferências.\n" 
-            "Estou aqui para ajudar! 😊"
-        )
-        options = {
-            "title": "Menu",
-            "rows": [
-                {"title": "Informações Pessoais", "id": InfoMenu.__name__},
-                {"title": "PNSPIPN", "id": "UnaSusMenu", "description": "Autor: Hilton P. Silva"},
-                {"title": "Conto Negrinha", "id": IntroMenuExercises.__name__, "description": "Autor: Monteiro Lobato"},
-            ],
-        }
-
-        message = InteractiveListMessage(to=wa_id, button_name="Ver", body_text=body)
-        message.add_header(header)
-        message.add_section(options)
-
-        await message.send(self.client_session)
-
-        self.next = "Redirecter"
         user = await get_user(self.db_session, wa_id)
         if not user:
             return
+        
+        message = TemplateMessage(
+            to=wa_id,
+            template_name="mvp_unasus_hello",
+            has_static_header=True,
+            has_flow_button=False,
+        )
+        
+        await message.send(self.client_session)
+        self.next = FirstInfo.__name__
         user.current_step = self.next
         await self.db_session.commit()
 
 
-@user_bp.register()
-class InfoMenu(ScriptBaseModel):
-    """Also known as Informações Pessoais, here the user can alter
-    what i known about them, change there name, gender and other 
-    user personal specific relations"""
+@welcome_bp.register()
+class FirstInfo(ScriptBaseModel):
+    """Next messasge after, wellcome user, user should not be redirected here"""
     async def _fn(self):
         contatcs = self.value.contacts
         if not contatcs:
@@ -87,17 +66,17 @@ class InfoMenu(ScriptBaseModel):
             return
         
         flow_action_data = {
-            "Nome": user.formatted_name,
-            "Sobrenome": user.last_name,
-            "Genero": user.gender,
-            "Email": user.email,
-            "Aniversario": user.birthday,
-            "SobreVoce": user.summary,
+            "Nome": contatc.profile.name,
+            "Sobrenome": "",
+            "Genero": "",
+            "Email": "",
+            "Aniversario": "",
+            "SobreVoce": "",
         }
         
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_info_menu",
+            template_name="mvp_unasus_first_info",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -109,11 +88,11 @@ class InfoMenu(ScriptBaseModel):
         self.next = "Redirecter"
         user.current_step = self.next
         await self.db_session.commit()
-        
-        
-@user_bp.register()
-class AllDone(ScriptBaseModel):
-    """Tells User that there message was properly recieved."""
+
+
+@welcome_bp.register()
+class IntroCompled(ScriptBaseModel):
+    """Checkpoint that the intro was completed"""
     async def _fn(self):
         contatcs = self.value.contacts
         if not contatcs:
@@ -124,10 +103,28 @@ class AllDone(ScriptBaseModel):
         if not user:
             return
         
-        message_content = "Maravilha! ✨ Recebi seus dados atualizados e parece que está tudo certinho por aqui. 👍"
+        message_content = (
+            f"Perfeito, {user.formatted_name}! 🎉 Completamos nossa introdução inicial com sucesso!\n\n"
+            
+            "Agora, vou te apresentar melhor como funciona a minha interface, " 
+            "para que você possa navegar com facilidade. Olha só como é simples:\n\n"
+            
+            "- *Comando Mágico* /:\n" 
+            "Você pode explorar minhas opções de forma rápida digitando / (barra). " 
+            "Ao fazer isso, um menu aparecerá com atalhos para diferentes seções e configurações. " 
+            "Assim, você pode acessar o que precisa de maneira bem prática! 🛠️\n\n"
+            
+            "- *Conversa Inteligente*:\n" 
+            "Além dos comandos, sinta-se à vontade para me pedir para ir a um "
+            "capítulo específico, buscar uma referência ou tópico. " 
+            "Farei o meu melhor para entender e te levar aonde você precisa! 🧠🔎\n\n"
+            
+            "Pronto(a) para começar a explorar o conteúdo?\n" 
+            "Vou te redirecionar agora para o Menu Principal. Lá, você poderá escolher o que deseja estudar."
+        )
         
         message = TextMessage(to=wa_id, body_text=message_content)
         await message.send(self.client_session)
-        self.next = "Redirecter"
-        user.current_step = self.next
-        await self.db_session.commit()
+        self.jump = True
+        self.next = "UserMenu"
+        

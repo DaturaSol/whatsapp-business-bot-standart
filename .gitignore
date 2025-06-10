@@ -18,6 +18,7 @@ __pycache__/
 .git
 
 # Etc
+etc/
 *.ps1
 *.log
 db/
