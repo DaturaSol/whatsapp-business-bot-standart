@@ -53,7 +53,7 @@ class UserMenu(ScriptBaseModel):
             "rows": [
                 {"title": "Informações Pessoais", "id": InfoMenu.__name__},
                 {"title": "PNSPIPN", "id": "UnaSusMenu", "description": "Autor: Hilton P. Silva"},
-                {"title": "Conto Negrinha", "id": IntroMenuExercises.__name__, "description": "Autor: Monteiro Lobato"},
+                # {"title": "Conto Negrinha", "id": , "description": "Autor: Monteiro Lobato"},
             ],
         }
 

@@ -83,3 +83,36 @@ class Redirecter(ScriptBaseModel):
                 user.birthday = response_json.get("Aniversario")
                 user.summary = response_json.get("SobreVoce")
                 await self.db_session.commit()  # Commits to be used in the next call
+                
+            case "UnaSusChapterOne":
+                self.next = "UnaSusChapterOneContent"
+            
+            case "UnaSusChapterTwo":
+                self.next = "UnaSusChapterTwoContent"
+                
+            case "UnaSusChapterThree":
+                self.next = "UnaSusChapterThreeContent"
+            
+            case "UnaSusChapterFour":
+                self.next = "UnaSusChapterFourContent"
+            
+            case "UnaSusChapterFive":
+                self.next = "UnaSusChapterFiveContent"
+                
+            case "UnaSusExerciseOne":
+                self.next = "UnaSusExerciseOneHandle"
+            
+            case "UnaSusExerciseTwo":
+                self.next = "UnaSusExerciseTwoHandle"
+                
+            case "UnaSusExerciseThree":
+                self.next = "UnaSusExerciseThreeHandle"
+                
+            case "UnaSusExerciseFour":
+                self.next = "UnaSusExerciseFourHandle"
+                
+            case "UnaSusExerciseFive":
+                self.next = "UnaSusExerciseFiveHandle"
+            
+            case "UnaSusBib":
+                self.next = "UnaSusBibHandle"

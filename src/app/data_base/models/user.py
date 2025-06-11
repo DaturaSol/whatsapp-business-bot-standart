@@ -74,10 +74,10 @@ class User(Base):
     past_question = Column(String)
     # Best would be to add these to a new class, but i am short on time
     # Una Sus
-    current_chapter_una = Column(String, default="ChapterOne")
+    current_chapter_una = Column(String, default="UnaSusChapterOne")
     current_exercise_una = Column(String, default="ExerciseOne")
-    exercise_grade_una = Column(JSON, default={"E1": 0, "E2": 0, "E3": 0, "E4": 0})
-    chapter_grade_una = Column(JSON, default={"C1": 0, "C2": 0, "C3": 0, "C4": 0})
+    exercise_grade_una = Column(JSON, default={"E1": (0, 0), "E2": (0, 0), "E3": (0, 0), "E4": (0, 0), "E5": (0, 0)})
+    chapter_grade_una = Column(JSON, default={"C1": 0, "C2": 0, "C3": 0, "C4": 0, "C5": 0})
     # Conto Ngerinha
     current_chapter_other = Column(String, default="ChapterOne")
     current_exercise_other = Column(String, default="ExerciseOne")
@@ -105,10 +105,10 @@ class User(Base):
         summary: str | None = None,
         current_step: str = "HelloUser",
         past_question: str | None = None,
-        current_chapter_una: str ="ChapterOne",
+        current_chapter_una: str ="UnaSusChapterOne",
         current_exercise_una: str ="ExerciseOne",
-        exercise_grade_una: dict ={"E1": 0, "E2": 0, "E3": 0, "E4": 0},
-        chapter_grade_una: dict = {"C1": 0, "C2": 0, "C3": 0, "C4": 0},
+        chapter_grade_una: dict = {"C1": 0, "C2": 0, "C3": 0, "C4": 0, "C5": 0},
+        exercise_grade_una: dict ={"E1": (0, 0), "E2": (0, 0), "E3": (0, 0), "E4": (0, 0), "E5": (0, 0)},
         current_chapter_other: str = "ChapterOne",
         current_exercise_other: str = "ExerciseOne",
         exercise_grade_other: dict = {"E1": 0, "E2": 0, "E3": 0, "E4": 0},
