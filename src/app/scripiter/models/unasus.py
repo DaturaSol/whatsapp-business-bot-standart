@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.data_base.db_helper.crud import get_user
-from app.scripiter import ScriptBlueprint, ScriptBaseModel
+from app.scripiter import ScriptBlueprint, ScriptBaseModel, ScripterDocName
 from app.client_session.services.genai import get_ai_response
 
 # --- WebHook ---
@@ -27,9 +27,10 @@ from app.client_session.messages.models.document import DocumentMessage
 log = getLogger(__name__)
 
 unasus_bp = ScriptBlueprint()
-
+unasus_doc = ScripterDocName()
 
 # --- Menu ---
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusMenu(ScriptBaseModel):
     """Menu for UnaSUS content also refered as PNSPIPN,
@@ -88,6 +89,7 @@ class UnaSusMenu(ScriptBaseModel):
 
 
 # --- Chapters ---
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterMenu(ScriptBaseModel):
     """Menu conteining all chapters for UnaSus content on
@@ -166,6 +168,7 @@ class UnaSusChapterMenu(ScriptBaseModel):
 
 
 # 0. Continue
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusContinueChapter(ScriptBaseModel):
     """Continues the user reading on the Una Sus PNSIPN
@@ -186,6 +189,7 @@ class UnaSusContinueChapter(ScriptBaseModel):
 
 
 # 1. Chapter one
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterOne(ScriptBaseModel):
     """Chapter one Una Sus PNSIPN topic
@@ -259,7 +263,7 @@ class UnaSusChapterOneContent(ScriptBaseModel):
         user.current_chapter_una = UnaSusChapterTwo.__name__  # type: ignore
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusVidLuisGamaDoc(ScriptBaseModel):
     """Link for the video on the Documentary on Luis Gama"""
@@ -290,7 +294,7 @@ class UnaSusVidLuisGamaDoc(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusVidLuisGamaFilm(ScriptBaseModel):
     """Link for the video on the Filme on Luis Gama"""
@@ -323,6 +327,7 @@ class UnaSusVidLuisGamaFilm(ScriptBaseModel):
 
 
 # 2. Chapeter two
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterTwo(ScriptBaseModel):
     """Chapter two Una Sus PNSIPN topic
@@ -399,7 +404,7 @@ class UnaSusChapterTwoContent(ScriptBaseModel):
         user.current_chapter_una = UnaSusChapterThree.__name__  # type: ignore
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusVidLeiCao(ScriptBaseModel):
     """Link for the video ide documentário Lei CAÓ 30 anos de Existência e Resistência - Lei 7.716/1989"""
@@ -430,7 +435,7 @@ class UnaSusVidLeiCao(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusDocNorteador(ScriptBaseModel):
     """Pdf for the Documento
@@ -462,7 +467,7 @@ class UnaSusDocNorteador(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusVidPNSIPN(ScriptBaseModel):
     """Link for the video Vídeo Política Nacional de Saúde Integral da População Negra (PNSIPN)
@@ -496,6 +501,7 @@ class UnaSusVidPNSIPN(ScriptBaseModel):
 
 
 # 3. Chapter
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterThree(ScriptBaseModel):
     """Chapter two Una Sus PNSIPN topic
@@ -529,6 +535,7 @@ class UnaSusChapterThree(ScriptBaseModel):
         await self.db_session.commit()
 
 
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterThreeContent(ScriptBaseModel):
     """Redirects the user to the videos they choose,
@@ -556,6 +563,7 @@ class UnaSusChapterThreeContent(ScriptBaseModel):
 
 
 # 4. Chapter
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterFour(ScriptBaseModel):
     """Chapter two Una Sus PNSIPN topic
@@ -617,6 +625,7 @@ class UnaSusChapterFourContent(ScriptBaseModel):
 
 
 # 5. Chapter
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusChapterFive(ScriptBaseModel):
     """Chapter two Una Sus PNSIPN topic
@@ -695,6 +704,7 @@ class UnaSusChapterFiveContent(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusPortaria(ScriptBaseModel):
     """Link for the site Portaria 344/2017"""
 
@@ -728,6 +738,7 @@ class UnaSusPortaria(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusAbrasco(ScriptBaseModel):
     """Link for the video Agora da ABRASCO sobre a PNSIPN e o preenchimento do 	quesito raça-cor."""
 
@@ -761,6 +772,7 @@ class UnaSusAbrasco(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusDocGuia(ScriptBaseModel):
     """Pdf for the Documento
     Guia de Enfrentamento ao Racismo Institucional"""
@@ -789,6 +801,7 @@ class UnaSusDocGuia(ScriptBaseModel):
 
 # Exercises
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusExerciseMenu(ScriptBaseModel):
     """Menu conteining all Exercises for UnaSus content on
     Política Nacional de Saúde Integral da População"""
@@ -861,6 +874,7 @@ class UnaSusExerciseMenu(ScriptBaseModel):
 
 
 # 0. Continue
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusContinueExercise(ScriptBaseModel):
     """Continues the user reading on the Una Sus PNSIPN
@@ -883,6 +897,7 @@ class UnaSusContinueExercise(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusRetryExercise(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -913,6 +928,7 @@ class UnaSusRetryExercise(ScriptBaseModel):
 
 
 # 1. Exercise
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusExerciseOne(ScriptBaseModel):
     """Exercise one Una Sus PNSIPN topic
@@ -1037,7 +1053,7 @@ class UnaSusExerciseOneQ1Answer(ScriptBaseModel):
                 )
                 await handler._fn()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q1A(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 1 Alternative A"""
@@ -1066,6 +1082,7 @@ class UnaSusE1Q1A(ScriptBaseModel):
         await self.db_session.commit()
 
 
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q1B(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 1 Alternative B"""
@@ -1094,7 +1111,7 @@ class UnaSusE1Q1B(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q1C(ScriptBaseModel):
     """Explains UnaSus Exercise one Question  1 Alternative C"""
@@ -1123,7 +1140,7 @@ class UnaSusE1Q1C(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q1D(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 1 Alternative D"""
@@ -1197,7 +1214,7 @@ class UnaSusExerciseOneQ2Answer(ScriptBaseModel):
                 )
                 await handler._fn()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q2A(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 2 Alternative A"""
@@ -1225,7 +1242,7 @@ class UnaSusE1Q2A(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q2B(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 2 Alternative B"""
@@ -1254,7 +1271,7 @@ class UnaSusE1Q2B(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q2C(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 2 Alternative C"""
@@ -1283,7 +1300,7 @@ class UnaSusE1Q2C(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE1Q2D(ScriptBaseModel):
     """Explains UnaSus Exercise one Question 2 Alternative D"""
@@ -1313,6 +1330,7 @@ class UnaSusE1Q2D(ScriptBaseModel):
 
 
 # 2. Exercise
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusExerciseTwo(ScriptBaseModel):
     """Exercise Two Una Sus PNSIPN
@@ -1437,7 +1455,7 @@ class UnaSusExerciseTwoQ1Answer(ScriptBaseModel):
                 )
                 await handler._fn()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q1A(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 1 Alternative A"""
@@ -1464,8 +1482,8 @@ class UnaSusE2Q1A(ScriptBaseModel):
         self.next = "Redirecter"
         user.current_step = self.next
         await self.db_session.commit()
-
-
+        
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q1B(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 1 Alternative B"""
@@ -1494,7 +1512,7 @@ class UnaSusE2Q1B(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q1C(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question  1 Alternative C"""
@@ -1524,7 +1542,7 @@ class UnaSusE2Q1C(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q1D(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 1 Alternative D"""
@@ -1598,7 +1616,7 @@ class UnaSusExerciseTwoQ2Answer(ScriptBaseModel):
                 )
                 await handler._fn()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q2A(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 2 Alternative A"""
@@ -1626,7 +1644,7 @@ class UnaSusE2Q2A(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q2B(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 2 Alternative B"""
@@ -1653,7 +1671,7 @@ class UnaSusE2Q2B(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q2C(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 2 Alternative C"""
@@ -1684,7 +1702,7 @@ class UnaSusE2Q2C(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE2Q2D(ScriptBaseModel):
     """Explains UnaSus Exercise 2 Question 2 Alternative D"""
@@ -1714,6 +1732,7 @@ class UnaSusE2Q2D(ScriptBaseModel):
 
 
 # 3. Exercise
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusExerciseThree(ScriptBaseModel):
     """Exercise Two Una Sus PNSIPN
@@ -1840,6 +1859,7 @@ class UnaSusExerciseThreeQ1Answer(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q1A(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 1 Alternative A"""
 
@@ -1868,6 +1888,7 @@ class UnaSusE3Q1A(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q1B(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 1 Alternative B"""
 
@@ -1897,6 +1918,7 @@ class UnaSusE3Q1B(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q1C(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question  1 Alternative C"""
 
@@ -1928,6 +1950,7 @@ class UnaSusE3Q1C(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q1D(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 1 Alternative D"""
 
@@ -2002,6 +2025,7 @@ class UnaSusExerciseThreeQ2Answer(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q2A(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 2 Alternative A"""
 
@@ -2031,6 +2055,7 @@ class UnaSusE3Q2A(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q2B(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 2 Alternative B"""
 
@@ -2059,6 +2084,7 @@ class UnaSusE3Q2B(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q2C(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 2 Alternative C"""
 
@@ -2089,6 +2115,7 @@ class UnaSusE3Q2C(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE3Q2D(ScriptBaseModel):
     """Explains UnaSus Exercise 3 Question 2 Alternative D"""
 
@@ -2118,6 +2145,7 @@ class UnaSusE3Q2D(ScriptBaseModel):
 
 # 4. Exercise
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusExerciseFour(ScriptBaseModel):
     """Exercise Two Una Sus PNSIPN
     topic A Política Nacional de Saúde Integral da População Negra (PNSIPN)"""
@@ -2243,6 +2271,7 @@ class UnaSusExerciseFourQ1Answer(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE4Q1A(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question 1 Alternative A"""
 
@@ -2271,6 +2300,7 @@ class UnaSusE4Q1A(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE4Q1B(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question 1 Alternative B"""
 
@@ -2301,6 +2331,7 @@ class UnaSusE4Q1B(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE4Q1C(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question  1 Alternative C"""
 
@@ -2330,6 +2361,7 @@ class UnaSusE4Q1C(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE4Q1D(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question 1 Alternative D"""
 
@@ -2486,7 +2518,7 @@ class UnaSusE4Q2C(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusE4Q2D(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question 2 Alternative D"""
@@ -2515,6 +2547,7 @@ class UnaSusE4Q2D(ScriptBaseModel):
 
 
 # 5. Exercise
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusExerciseFive(ScriptBaseModel):
     """Exercise Two Una Sus PNSIPN
@@ -2641,6 +2674,7 @@ class UnaSusExerciseFiveQ1Answer(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q1A(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 1 Alternative A"""
 
@@ -2669,6 +2703,7 @@ class UnaSusE5Q1A(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q1B(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 1 Alternative B"""
 
@@ -2698,6 +2733,7 @@ class UnaSusE5Q1B(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q1C(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question  1 Alternative C"""
 
@@ -2726,6 +2762,7 @@ class UnaSusE5Q1C(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q1D(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 1 Alternative D"""
 
@@ -2801,6 +2838,7 @@ class UnaSusExerciseFiveQ2Answer(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q2A(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 2 Alternative A"""
 
@@ -2829,6 +2867,7 @@ class UnaSusE5Q2A(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q2B(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 2 Alternative B"""
 
@@ -2857,6 +2896,7 @@ class UnaSusE5Q2B(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q2C(ScriptBaseModel):
     """Explains UnaSus Exercise 5 Question 2 Alternative C"""
 
@@ -2886,6 +2926,7 @@ class UnaSusE5Q2C(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusE5Q2D(ScriptBaseModel):
     """Explains UnaSus Exercise 4 Question 2 Alternative D"""
 
@@ -2916,8 +2957,9 @@ class UnaSusE5Q2D(ScriptBaseModel):
 
 # Check Exercises:
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaCheckCongratulations(ScriptBaseModel):
-    """Explains UnaSus Exercise 4 Question 2 Alternative D"""
+    """Checks if you have completed all exercises on unasus"""
 
     async def _fn(self):
         contatcs = self.value.contacts
@@ -2990,6 +3032,7 @@ class UnaCheckCongratulations(ScriptBaseModel):
 
 
 # --- Bibiograph
+@unasus_doc.register()
 @unasus_bp.register()
 class UnaSusBib(ScriptBaseModel):
     """Bibliograph of una sus content"""
@@ -3081,6 +3124,7 @@ class UnaSusBibHandle(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusRaciPdf(ScriptBaseModel):
     """Pdf for the Documento
     ALMEIDA, Silvio Luís. Racismo estrutural. Coleção Feminismos Plurais. São Paulo: Sueli Carneiro; Pólen. Brasil 2011
@@ -3109,6 +3153,7 @@ class UnaSusRaciPdf(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusGuiaPdf(ScriptBaseModel):
     """Pdf for the Documento
     BRASIL. Guia de implementação do quesito Raça/Cor/Etnia. Brasília: Universidade de Brasília, Ministério da Saúde, 2018.
@@ -3137,6 +3182,7 @@ class UnaSusGuiaPdf(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusBoletimV1Site(ScriptBaseModel):
     """Link for the siteBoletim Epidemiológico Especial. Saúde da População Negra, Volume 1"""
 
@@ -3168,6 +3214,7 @@ class UnaSusBoletimV1Site(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusBoletimV2Site(ScriptBaseModel):
     """Link for the siteBoletim Epidemiológico Especial. Saúde da População Negra, Volume 2"""
 
@@ -3199,6 +3246,7 @@ class UnaSusBoletimV2Site(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusComunityPdf(ScriptBaseModel):
     """Pdf for the Documento
     Vulnerabilidade Histórica e Futura das Comunidades Quilombolas do Pará em Tempo de Pandemia.
@@ -3227,6 +3275,7 @@ class UnaSusComunityPdf(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusDenunciaSite(ScriptBaseModel):
     """Link for the site Denúncia do CNS e CNDH à ONU mostra que negros morreram cinco vezes mais de Covid-19 que brancos."""
 
@@ -3258,6 +3307,7 @@ class UnaSusDenunciaSite(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusDesiqualPdf(ScriptBaseModel):
     """Pdf for the Documento
     Desigualdades Raciais e Covid-19. O que a pandemia encontra no Brasil.
@@ -3286,6 +3336,7 @@ class UnaSusDesiqualPdf(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusDestinoSite(ScriptBaseModel):
     """Link for the site Denúncia do CNS e CNDH à ONU mostra que negros morreram cinco vezes mais de Covid-19 que brancos."""
 
@@ -3317,6 +3368,7 @@ class UnaSusDestinoSite(ScriptBaseModel):
 
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusPoliticaVideo(ScriptBaseModel):
     """Link for the video Como implementar a Política Nacional de Saúde Integral da População Negra no seu município?"""
 
@@ -3347,6 +3399,7 @@ class UnaSusPoliticaVideo(ScriptBaseModel):
         await self.db_session.commit()
 
 @unasus_bp.register()
+@unasus_doc.register()
 class UnaSusDireitosHumanosPdf(ScriptBaseModel):
     """Pdf for the Documento
     Desigualdades Raciais e Covid-19. O que a pandemia encontra no Brasil.

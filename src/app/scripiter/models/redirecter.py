@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.data_base.db_helper.crud import get_user
-from app.scripiter import ScriptBlueprint, ScriptBaseModel
+from app.scripiter import ScriptBlueprint, ScriptBaseModel, ScripterDocName
 from app.client_session.services.genai import get_ai_response
 
 # --- WebHook ---
@@ -25,7 +25,9 @@ from app.client_session.messages.models.button import InteractiveButtonMessage
 log = getLogger(__name__)
 
 redirecter_bp = ScriptBlueprint()
+redirecter_doc = ScripterDocName()
 
+@redirecter_doc.register()
 @redirecter_bp.register()
 class Redirecter(ScriptBaseModel):
     """Depending on the payload type, the redirecter will send the user

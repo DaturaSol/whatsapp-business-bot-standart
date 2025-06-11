@@ -99,3 +99,28 @@ class ScriptBlueprint:
 
     def get_registery(self):
         return self._register_classes
+
+
+class ScripterDocName:
+    """Class Responsible to aid ai redirecter"""
+    def __init__(self) -> None:
+        self._register_classes = []
+    
+    def register(self):
+        """Register a function inside a dictionary"""
+
+        def wrapper(cls):
+            self._register_classes.append(
+                {
+                    "redirecter": cls.__name__,
+                    "description": cls.__doc__,
+                    "jump": True if cls.__name__ != "Redirecter" else False
+                }
+            )
+            return cls
+
+        return wrapper
+
+    def get_registery(self):
+        return self._register_classes
+        

@@ -24,11 +24,11 @@ from app.client_session.messages.models.button import InteractiveButtonMessage
 
 log = getLogger(__name__)
 
-user_bp = ScriptBlueprint()
+conto_bp = ScriptBlueprint()
 
 
 # --- Redirecter ---
-@user_bp.register()
+@conto_bp.register()
 class Redirecter(ScriptBaseModel):
     """This class is responsible for redirecting unkown text payloads
     to the AI model to answer and also: list, button, flow payloads to redrect them."""
@@ -162,7 +162,7 @@ class Redirecter(ScriptBaseModel):
                 pass
 
 
-@user_bp.register()
+@conto_bp.register()
 class Retry(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -193,7 +193,7 @@ class Retry(ScriptBaseModel):
 
 
 # --- Intros ---
-@user_bp.register()
+@conto_bp.register()
 class HelloUser(ScriptBaseModel):
     async def _fn(self):
         messages = self.value.messages
@@ -222,7 +222,7 @@ class HelloUser(ScriptBaseModel):
         self.jump = True
 
 
-@user_bp.register()
+@conto_bp.register()
 class IntroPersonalInfo(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -257,7 +257,7 @@ class IntroPersonalInfo(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class IntroMenu(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -297,7 +297,7 @@ class IntroMenu(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class IntroMenuChapters(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -342,7 +342,7 @@ class IntroMenuChapters(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class IntroMenuExercises(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -387,7 +387,7 @@ class IntroMenuExercises(ScriptBaseModel):
 
 
 # --- Menu ---
-@user_bp.register()
+@conto_bp.register()
 class Menu(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -428,7 +428,7 @@ class Menu(ScriptBaseModel):
 
 
 # --- Personal Info ---
-@user_bp.register()
+@conto_bp.register()
 class PersonalInfoMenu(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -476,7 +476,7 @@ class PersonalInfoMenu(ScriptBaseModel):
 
 
 # --- Chapters ---
-@user_bp.register()
+@conto_bp.register()
 class MenuChapters(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -520,7 +520,7 @@ class MenuChapters(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class ContinueChapter(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -537,7 +537,7 @@ class ContinueChapter(ScriptBaseModel):
         self.jump = True
 
 
-@user_bp.register()
+@conto_bp.register()
 class ChapterOne(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -566,7 +566,7 @@ class ChapterOne(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class ChapterTwo(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -595,7 +595,7 @@ class ChapterTwo(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class ChapterThree(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -624,7 +624,7 @@ class ChapterThree(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class ChapterFour(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -654,7 +654,7 @@ class ChapterFour(ScriptBaseModel):
 
 
 # --- Exercises ---
-@user_bp.register()
+@conto_bp.register()
 class MenuExercises(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -695,7 +695,7 @@ class MenuExercises(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class ContinueExercise(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -712,7 +712,7 @@ class ContinueExercise(ScriptBaseModel):
         self.jump = True
 
 
-@user_bp.register()
+@conto_bp.register()
 class ExerciseOne(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -819,7 +819,7 @@ class ExerciseOneChoice:
         )
 
 
-@user_bp.register()
+@conto_bp.register()
 class ExerciseTwo(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -921,7 +921,7 @@ class ExerciseTwoChoice:
         )
 
 
-@user_bp.register()
+@conto_bp.register()
 class ExerciseThree(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -1021,7 +1021,7 @@ class ExerciseThreeChoice:
         )
 
 
-@user_bp.register()
+@conto_bp.register()
 class ExerciseFour(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -1124,7 +1124,7 @@ class ExerciseFourChoice:
 
 
 # --- Extra ---
-@user_bp.register()
+@conto_bp.register()
 class VerifyCongratulations(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -1153,7 +1153,7 @@ class VerifyCongratulations(ScriptBaseModel):
             self.next = Congratulations.__name__
 
 
-@user_bp.register()
+@conto_bp.register()
 class Congratulations(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -1176,7 +1176,7 @@ class Congratulations(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class NotCongratulations(ScriptBaseModel):
     async def _fn(self):
         contatcs = self.value.contacts
@@ -1199,7 +1199,7 @@ class NotCongratulations(ScriptBaseModel):
         await self.db_session.commit()
 
 
-@user_bp.register()
+@conto_bp.register()
 class AIResponse(ScriptBaseModel):
     async def _fn(self):
         messages = self.value.messages

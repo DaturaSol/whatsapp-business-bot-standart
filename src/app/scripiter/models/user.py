@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.data_base.db_helper.crud import get_user
-from app.scripiter import ScriptBlueprint, ScriptBaseModel
+from app.scripiter import ScriptBlueprint, ScriptBaseModel, ScripterDocName
 from app.client_session.services.genai import get_ai_response
 
 # --- WebHook ---
@@ -24,7 +24,9 @@ from app.client_session.messages.models.button import InteractiveButtonMessage
 log = getLogger(__name__)
 
 user_bp = ScriptBlueprint()
+user_docs = ScripterDocName()
 
+@user_docs.register()
 @user_bp.register()
 class UserMenu(ScriptBaseModel):
     """User Main menu also Known as Painel de Controle, here they can choose
@@ -70,7 +72,7 @@ class UserMenu(ScriptBaseModel):
         user.current_step = self.next
         await self.db_session.commit()
 
-
+@user_docs.register()
 @user_bp.register()
 class InfoMenu(ScriptBaseModel):
     """Also known as Informações Pessoais, here the user can alter
