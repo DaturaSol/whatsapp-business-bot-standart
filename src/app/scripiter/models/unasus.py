@@ -145,7 +145,7 @@ class UnaSusChapterMenu(ScriptBaseModel):
                     "title": "Unidade 5",
                     "id": UnaSusChapterFive.__name__,
                     "description": "O Quesito Raça/Cor...",
-                },
+                }
             ],
         }
 
@@ -161,6 +161,8 @@ class UnaSusChapterMenu(ScriptBaseModel):
             return
         user.current_step = self.next
         await self.db_session.commit()
+
+
 
 
 # 0. Continue
@@ -199,7 +201,7 @@ class UnaSusChapterOne(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_u1",
+            template_name="mvp_unasus_u1_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -336,7 +338,7 @@ class UnaSusChapterTwo(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_u2",
+            template_name="mvp_unasus_u2_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -509,7 +511,7 @@ class UnaSusChapterThree(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_u3",
+            template_name="mvp_unasus_u3_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -569,7 +571,7 @@ class UnaSusChapterFour(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_u4",
+            template_name="mvp_unasus_u4_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -630,7 +632,7 @@ class UnaSusChapterFive(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_u4",
+            template_name="mvp_unasus_u5_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -868,12 +870,14 @@ class UnaSusContinueExercise(ScriptBaseModel):
         contatcs = self.value.contacts
         if not contatcs:
             return
+        
         contatc = contatcs[0]
         wa_id = contatc.wa_id
 
         user = await get_user(self.db_session, wa_id)
         if not user:
             return
+        
         self.next = user.current_exercise_una  # type: ignore
         self.jump = True
 
@@ -924,7 +928,7 @@ class UnaSusExerciseOne(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_e1",
+            template_name="mvp_unasus_e1_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -985,7 +989,6 @@ class UnaSusExerciseOneHandle(ScriptBaseModel):
             return
 
         user.current_step = self.next
-        user.current_exercise_una = self.__class__.__name__
         await self.db_session.commit()
 
 
@@ -1325,7 +1328,7 @@ class UnaSusExerciseTwo(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_e2",
+            template_name="mvp_unasus_e2_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -1386,7 +1389,6 @@ class UnaSusExerciseTwoHandle(ScriptBaseModel):
             return
 
         user.current_step = self.next
-        user.current_exercise_una = self.__class__.__name__
         await self.db_session.commit()
 
 
@@ -1727,7 +1729,7 @@ class UnaSusExerciseThree(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_e3",
+            template_name="mvp_unasus_e3_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -1788,7 +1790,6 @@ class UnaSusExerciseThreeHandle(ScriptBaseModel):
             return
 
         user.current_step = self.next
-        user.current_exercise_una = self.__class__.__name__
         await self.db_session.commit()
 
 
@@ -2131,7 +2132,7 @@ class UnaSusExerciseFour(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_e4",
+            template_name="mvp_unasus_e4_1",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -2192,7 +2193,6 @@ class UnaSusExerciseFourHandle(ScriptBaseModel):
             return
 
         user.current_step = self.next
-        user.current_exercise_una = self.__class__.__name__
         await self.db_session.commit()
 
 
@@ -2530,7 +2530,7 @@ class UnaSusExerciseFive(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_e5",
+            template_name="mvp_unasus_e5_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",
@@ -2591,7 +2591,6 @@ class UnaSusExerciseFiveHandle(ScriptBaseModel):
             return
 
         user.current_step = self.next
-        user.current_exercise_una = self.__class__.__name__
         await self.db_session.commit()
 
 
@@ -2938,7 +2937,7 @@ class UnaCheckCongratulations(ScriptBaseModel):
             "C4": "Falta o capítulo 4",
             "C5": "Falta o capítulo 5 ",
         }
-        exercises = user.exercise_grade_other
+        exercises = user.exercise_grade_una
         exercises_map = {
             "E1": (
                 "Exercicio 1 Questão 1, faltante.",
@@ -2966,16 +2965,19 @@ class UnaCheckCongratulations(ScriptBaseModel):
         for key, value in chapters.items():
             if value == 0:
                 give_congrats = False
-                message_content = chapter_map[key]
-                message = TextMessage(to=wa_id, body_text=message_content)
+                message_content = chapter_map.get(key)
+                message = TextMessage(to=wa_id, body_text=message_content) # type: ignore
                 await message.send(self.client_session)
 
-        for key, value in exercises.items():
-            for grade, message_content in zip(exercises[key], exercises_map[key]):  # type: ignore
-                if grade == 0:
+        for ex_key, ex_grades_list in exercises.items():
+            exercise_specific_messages = exercises_map.get(ex_key)
+            for i, grade_value in enumerate(ex_grades_list):
+                if grade_value == 0:
                     give_congrats = False
-                    message = TextMessage(to=wa_id, body_text=message_content)
-                    await message.send(self.client_session)
+                    if i < len(exercise_specific_messages): # type: ignore
+                        message_content = exercise_specific_messages[i] # type: ignore
+                        message = TextMessage(to=wa_id, body_text=message_content)
+                        await message.send(self.client_session)
 
         if give_congrats:
             message_content = "Parabens você completou toda essa seção com exito!"
@@ -3002,7 +3004,7 @@ class UnaSusBib(ScriptBaseModel):
 
         message = TemplateMessage(
             to=wa_id,
-            template_name="mvp_unasus_bib",
+            template_name="mvp_unasus_bib_0",
             has_static_header=True,
             has_flow_button=True,
             flow_button_index="0",

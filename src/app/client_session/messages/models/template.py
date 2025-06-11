@@ -5,7 +5,7 @@ from typing import Literal, Optional, List, Union, Dict, Any
 
 from app.client_session.messages.models.base import WhatsAppRequestTo
 
-# NOTE: I am not proud of this, i have not implement most things, and was quite rushed 
+# # NOTE: I am not proud of this, i have not implement most things, and was quite rushed 
 
 class LanguageObject(BaseModel):
     code: str

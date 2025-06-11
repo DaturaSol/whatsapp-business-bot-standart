@@ -52,7 +52,18 @@ class Redirecter(ScriptBaseModel):
         if isinstance(message, NfmReplyMessage):
             await self.handle_nfm_reply(message, contact)
             
-    
+        if isinstance(message, TextMessageWeb):
+            message_body = message.text.body
+            match message_body:
+                case "/Painel":
+                    self.next = "UserMenu"
+                case "/PNSPIPN":
+                    self.next = "UnaSusMenu"
+                case "/Info":
+                    self.next = "InfoMenu"
+                case _:
+                    self.next = "AIResponse"
+            
     async def handle_nfm_reply(self, message: NfmReplyMessage, contact: Contact):
         response_json: dict = json.loads(message.interactive.nfm_reply.response_json)
         wa_id = contact.wa_id
