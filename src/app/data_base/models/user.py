@@ -70,7 +70,7 @@ class User(Base):
     email = Column(String)
     birthday = Column(String)
     summary = Column(String)
-    current_step = Column(String, default="HelloUser")
+    current_step = Column(String, default="WellComeUser")
     past_question = Column(String)
     # Best would be to add these to a new class, but i am short on time
     # Una Sus
@@ -103,7 +103,7 @@ class User(Base):
         email: str | None = None,
         birthday: str | None = None,
         summary: str | None = None,
-        current_step: str = "HelloUser",
+        current_step: str = "WellComeUser",
         past_question: str | None = None,
         current_chapter_una: str ="UnaSusChapterOne",
         current_exercise_una: str ="ExerciseOne",
